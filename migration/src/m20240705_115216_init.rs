@@ -82,15 +82,13 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Mails::Body).string())
                     .col(ColumnDef::new(Mails::Folder).string())
                     .col(ColumnDef::new(Mails::Tag).string())
-                    .foreign_key(ForeignKey::create()
-                        .name("FK-mails-owner")
-                        .from(Mails::Table, Mails::Owner)
-                        .to(Accounts::Table, Accounts::Id)
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("FK-mails-owner")
+                            .from(Mails::Table, Mails::Owner)
+                            .to(Accounts::Table, Accounts::Id),
                     )
-                    .index(Index::create()
-                        .name("IDX-mails-owner")
-                        .col(Mails::Owner)
-                    )
+                    .index(Index::create().name("IDX-mails-owner").col(Mails::Owner))
                     .to_owned(),
             )
             .await?;
