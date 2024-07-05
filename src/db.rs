@@ -28,7 +28,7 @@ pub async fn connect_db() -> Result<DatabaseConnection, DbErr> {
 }
 
 // TEMPORARY: test database connection
-pub async fn check_db(db: DatabaseConnection) {
+pub async fn _check_db(db: DatabaseConnection) {
     assert!(db.ping().await.is_ok());
     db.clone().close().await.unwrap();
     assert!(matches!(db.ping().await, Err(DbErr::ConnectionAcquire(_))));
