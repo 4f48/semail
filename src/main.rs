@@ -7,7 +7,7 @@ use axum::{
 };
 use migration::{Migrator, MigratorTrait};
 
-use routes::send::main as send;
+use routes::receive::main as send;
 
 #[tokio::main]
 async fn main() {
