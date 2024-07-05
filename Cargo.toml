@@ -3,6 +3,9 @@ name = "office"
 version = "0.1.0"
 edition = "2021"
 
+[workspace]
+members = [".", "migration"]
+
 [dependencies]
 axum = "0.7.5"
 serde_json = "1.0.120"
