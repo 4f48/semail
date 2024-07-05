@@ -16,11 +16,14 @@ enum Accounts {
 #[derive(Iden)]
 enum Mails {
     Table,
+    Owner,
     Id,
     From,
     To,
     Subject,
     Body,
+    Folder,
+    Tag,
 }
 
 #[async_trait::async_trait]
@@ -60,7 +63,6 @@ impl MigrationTrait for Migration {
                     .to_owned(),
             )
             .await?;
-
         manager
             .create_table(
                 Table::create()
@@ -73,10 +75,22 @@ impl MigrationTrait for Migration {
                             .unique_key()
                             .not_null(),
                     )
+                    .col(ColumnDef::new(Mails::Owner).uuid().not_null())
                     .col(ColumnDef::new(Mails::From).string().not_null())
                     .col(ColumnDef::new(Mails::To).string().not_null())
                     .col(ColumnDef::new(Mails::Subject).string())
                     .col(ColumnDef::new(Mails::Body).string())
+                    .col(ColumnDef::new(Mails::Folder).string())
+                    .col(ColumnDef::new(Mails::Tag).string())
+                    .foreign_key(ForeignKey::create()
+                        .name("FK-mails-owner")
+                        .from(Mails::Table, Mails::Owner)
+                        .to(Accounts::Table, Accounts::Id)
+                    )
+                    .index(Index::create()
+                        .name("IDX-mails-owner")
+                        .col(Mails::Owner)
+                    )
                     .to_owned(),
             )
             .await?;
@@ -94,12 +108,4 @@ impl MigrationTrait for Migration {
 
         Ok(())
     }
-}
-
-#[derive(DeriveIden)]
-enum Post {
-    Table,
-    Id,
-    Title,
-    Text,
 }
