@@ -7,7 +7,9 @@ use axum::{
 };
 use migration::{Migrator, MigratorTrait};
 
+use routes::get_users::main as users;
 use routes::receive::main as send;
+use routes::get_emails::main as mails;
 
 #[tokio::main]
 async fn main() {
@@ -19,7 +21,13 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(|| async { "Hello, World!" }))
-        .route("/send", post(send));
+        .route("/send", post(send))
+        .route(
+            "/test",
+            get(|| async { db::create_test_user().await.unwrap() }),
+        )
+        .route("/get", get(users))
+        .route("/mails", get(mails));
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:25052")
         .await
