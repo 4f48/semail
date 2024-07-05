@@ -88,7 +88,7 @@ impl MigrationTrait for Migration {
                             .from(Mails::Table, Mails::Owner)
                             .to(Accounts::Table, Accounts::Id),
                     )
-                    .index(Index::create().name("IDX-mails-owner").col(Mails::Owner))
+                    // .index(Index::create().name("IDX-mails-owner").col(Mails::Owner))
                     .to_owned(),
             )
             .await?;
@@ -102,9 +102,6 @@ impl MigrationTrait for Migration {
             .await?;
         manager
             .drop_table(Table::drop().table(Mails::Table).to_owned())
-            .await?;
-        manager
-            .drop_index(Index::drop().name("IDX-mails-owner").to_owned())
             .await?;
         manager
             .drop_foreign_key(ForeignKey::drop().name("FK-mails-owner").to_owned())
