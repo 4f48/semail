@@ -1,9 +1,0 @@
-POST http://localhost:25052/send
-Content-Type: application/json
-
-{
-  "Something": "Nothing",
-  "Anything": "A"
-}
-
-###
