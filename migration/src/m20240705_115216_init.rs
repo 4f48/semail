@@ -60,7 +60,7 @@ impl MigrationTrait for Migration {
                     .to_owned(),
             )
             .await?;
-        
+
         manager
             .create_table(
                 Table::create()
@@ -80,13 +80,17 @@ impl MigrationTrait for Migration {
                     .to_owned(),
             )
             .await?;
-        
+
         Ok(())
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        manager.drop_table(Table::drop().table(Accounts::Table).to_owned()).await?;
-        manager.drop_table(Table::drop().table(Mails::Table).to_owned()).await?;
+        manager
+            .drop_table(Table::drop().table(Accounts::Table).to_owned())
+            .await?;
+        manager
+            .drop_table(Table::drop().table(Mails::Table).to_owned())
+            .await?;
 
         Ok(())
     }
