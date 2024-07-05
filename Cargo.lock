@@ -1124,6 +1124,7 @@ name = "office"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "log",
  "sea-orm",
  "serde",
  "serde_json",
