@@ -2,12 +2,14 @@ use crate::db;
 use axum::{Json};
 use entity::mails::ActiveModel;
 use sea_orm::ActiveValue::Set;
-use sea_orm::{ActiveModelTrait, DbErr};
+use sea_orm::{ActiveModelTrait, ColumnTrait, DbErr, EntityTrait, QueryFilter};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use serde_json::Value;
 use uuid::{uuid, Uuid};
 use regex::Regex;
+use entity::accounts;
+use entity::prelude::Accounts;
 
 #[derive(Serialize, Deserialize)]
 struct Payload {
@@ -65,7 +67,7 @@ async fn insert(
 
     mail.insert(&db).await?;
     
-    uuid_from_recipient(to).await.unwrap();
+    dbg!(uuid_from_recipient(to).await.unwrap());
 
     Ok(())
 }
@@ -74,6 +76,7 @@ async fn insert(
 enum Error {
     AddressFormatError,
     WrongInstance,
+    DbErr,
 }
 
 #[derive(Debug)]
@@ -98,7 +101,10 @@ async fn uuid_from_recipient(recipient: String) -> Result<Uuid, Error> {
         return Err(Error::WrongInstance)
     }
     
-    // query db for uuid
-
-    Ok(uuid!("019083d2-86c7-7d22-947d-b4c3937db73b"))
+    let uuid = match Accounts::find().filter(accounts::Column::Name.eq(recipient.account)).all(&db::connect_db().await.unwrap()).await {
+        Ok(uuid) => uuid.first().unwrap().id,
+        Err(_) => return Err(Error::DbErr)
+    };
+    
+    Ok(uuid)
 }
