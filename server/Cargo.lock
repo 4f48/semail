@@ -1569,6 +1569,7 @@ dependencies = [
  "entity",
  "log",
  "migration",
+ "regex",
  "sea-orm",
  "serde",
  "serde_json",
