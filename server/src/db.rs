@@ -1,6 +1,6 @@
 use entity::accounts::ActiveModel;
-use entity::prelude::{Accounts, Mails};
 use entity::mails;
+use entity::prelude::{Accounts, Mails};
 use sea_orm::ActiveValue::Set;
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, ConnectOptions, Database, DatabaseConnection, DbErr,

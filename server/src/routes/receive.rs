@@ -81,7 +81,17 @@ pub async fn main(Json(payload): Json<Value>) -> (StatusCode, Json<Value>) {
         .all(&db)
         .await
     {
-        Ok(uuid) => uuid.first().unwrap().id,
+        Ok(results) => match results.first() {
+            Some(account) => account.id,
+            None => {
+                return (
+                    StatusCode::BAD_REQUEST,
+                    Json(json!({
+                        "error": "this account doesn't exist here"
+                    })),
+                )
+            }
+        },
         Err(error) => {
             return (
                 StatusCode::INTERNAL_SERVER_ERROR,
