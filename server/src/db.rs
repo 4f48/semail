@@ -2,7 +2,10 @@ use entity::accounts::ActiveModel;
 use entity::prelude::{Accounts, Mails};
 use entity::mails;
 use sea_orm::ActiveValue::Set;
-use sea_orm::{ActiveModelTrait, ColumnTrait, ConnectOptions, Database, DatabaseConnection, DbErr, EntityTrait, QueryFilter};
+use sea_orm::{
+    ActiveModelTrait, ColumnTrait, ConnectOptions, Database, DatabaseConnection, DbErr,
+    EntityTrait, QueryFilter,
+};
 use serde_json::Value;
 use sqlx::migrate::MigrateDatabase;
 use sqlx::Sqlite;
@@ -66,7 +69,11 @@ pub async fn get_accounts() -> Result<Vec<Value>, DbErr> {
 
 pub async fn get_emails(uuid: Uuid) -> Result<Vec<Value>, DbErr> {
     let db = connect_db().await?;
-    let accounts: Vec<Value> = Mails::find().filter(mails::Column::Owner.eq(uuid)).into_json().all(&db).await?;
+    let accounts: Vec<Value> = Mails::find()
+        .filter(mails::Column::Owner.eq(uuid))
+        .into_json()
+        .all(&db)
+        .await?;
 
     println!("{:?}", accounts);
     Ok(accounts)
