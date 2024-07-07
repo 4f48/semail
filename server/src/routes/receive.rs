@@ -1,6 +1,8 @@
+use std::env;
 use crate::db;
 use axum::http::StatusCode;
 use axum::Json;
+use dotenv::dotenv;
 use entity::accounts;
 use entity::mails::ActiveModel;
 use entity::prelude::Accounts;
@@ -54,12 +56,12 @@ pub async fn main(Json(payload): Json<Value>) -> (StatusCode, Json<Value>) {
         instance: recipient[1].parse().unwrap(),
     };
 
-    // example.dev hardcoded for testing, acquire INSTANCE_URL environment variable later
-    if recipient.instance != "example.dev" {
+    dotenv().ok();
+    if recipient.instance != env::var("INSTANCE_URL").expect("INSTANCE_URL is not defined") {
         return (
             StatusCode::MISDIRECTED_REQUEST,
             Json(json!({
-                "error": format!("wrong instance, this is example.dev, not {}", recipient.instance)
+                "error": format!("wrong instance, this is {}, not {}", std::env::var("INSTANCE_URL").expect("INSTANCE_URL is not defined"), recipient.instance)
             })),
         );
     }
