@@ -1,6 +1,7 @@
 use entity::accounts::ActiveModel;
 use entity::mails;
 use entity::prelude::{Accounts, Mails};
+use migration::{Migrator, MigratorTrait};
 use sea_orm::ActiveValue::Set;
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, ConnectOptions, Database, DatabaseConnection, DbErr,
@@ -17,7 +18,18 @@ pub async fn create_db() {
     if !Sqlite::database_exists(DB_URL).await.unwrap_or(false) {
         println!("Creating database {}", DB_URL);
         match Sqlite::create_database(DB_URL).await {
-            Ok(_) => println!("Successfully created database"),
+            Ok(_) => {
+                println!("Successfully created database");
+                match connect_db().await {
+                    Ok(database_connection) => {
+                        match Migrator::fresh(&database_connection).await {
+                            Ok(_) => println!("Successfully applied migrations."),
+                            Err(error) => println!("Failed to apply migrations: {}", error),
+                        };
+                    }
+                    Err(error) => println!("Connecting to database failed: {}", error),
+                };
+            }
             Err(error) => panic!("Something went wrong while creating database: {}", error),
         }
     }
