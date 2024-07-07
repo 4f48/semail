@@ -18,3 +18,4 @@ migration = { path = "migration" }
 entity = { path = "entity" }
 uuid = { version = "1.9.1", features = [ "v7", "fast-rng" ] }
 regex = "1.10.5"
+dotenv = "0.15.0"
