@@ -18,6 +18,20 @@ export const actions: Actions = {
 				form
 			});
 		}
+
+		const response = await fetch('http://localhost:25052/auth/register', {
+			method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+			body: JSON.stringify({
+				address: form.data.address,
+				password: form.data.password
+			})
+		});
+
+		console.debug(response);
+
 		return {
 			form
 		};
