@@ -5,13 +5,13 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct FormData {
     address: String,
     password: String,
 }
 
-pub async fn main(Form(form_data): Form<FormData>) -> Redirect {
+pub async fn main(Form(form_data): Form<FormData>) -> (StatusCode, Json<Value>) {
     let regex = Regex::new(r"^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").unwrap();
     if !regex.is_match(&form_data.address) {
         return (
@@ -22,5 +22,12 @@ pub async fn main(Form(form_data): Form<FormData>) -> Redirect {
         );
     };
     
-    Redirect::to("http://localhost:4321/")
+    // add more checks and database insert
+
+    (
+        StatusCode::OK,
+        Json(json!({
+            "success": "added account to registry"
+        }))
+    )
 }
