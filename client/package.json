@@ -42,8 +42,12 @@
 	"type": "module",
 	"packageManager": "pnpm@9.4.0+sha256.b6fd0bfda555e7e584ad7e56b30c68b01d5a04f9ee93989f4b93ca8473c49c74",
 	"dependencies": {
+		"bits-ui": "^0.21.12",
 		"clsx": "^2.1.1",
+		"formsnap": "^1.0.1",
+		"sveltekit-superforms": "^2.15.2",
 		"tailwind-merge": "^2.4.0",
-		"tailwind-variants": "^0.2.1"
+		"tailwind-variants": "^0.2.1",
+		"zod": "^3.23.8"
 	}
 }
