@@ -1,12 +1,15 @@
 use axum::http::StatusCode;
-use axum::Json;
+use axum::{Form, Json};
+use axum::response::Redirect;
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
-pub async fn main() -> (StatusCode, Json<Value>) {
-    (
-        StatusCode::OK,
-        Json(json!({
-            "success": "user added to registry"
-        }))
-    )
+#[derive(Serialize, Deserialize)]
+pub struct FormData {
+    address: String,
+    password: String,
+}
+
+pub async fn main(Form(form_data): Form<FormData>) -> Redirect {
+    Redirect::to("http://localhost:4321/")
 }

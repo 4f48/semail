@@ -10,7 +10,7 @@ use migration::{Migrator, MigratorTrait};
 use routes::get_emails::main as mails;
 use routes::get_users::main as users;
 use routes::receive::main as send;
-use routes::auth::register::main as reigser;
+use routes::auth::register::main as register;
 
 #[tokio::main]
 async fn main() {
