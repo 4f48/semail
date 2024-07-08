@@ -1,5 +1,15 @@
 ---
-
+if (Astro.request.method === "POST") {
+    try {
+        const data = await Astro.request.formData();
+        console.debug(data);
+        // send data off to the server
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        }
+    }
+}
 ---
 
 <html lang="en" class="h-[100%]">
@@ -12,20 +22,24 @@
     </head>
     <body class="h-[100%] w-[100%] flex flex-col items-center justify-center">
         <h1 class="text-3xl font-bold mb-3">Register an account</h1>
-        <form class="flex flex-col gap-3">
+        <form class="flex flex-col gap-3" method="POST">
             <label class="flex flex-col items-center">
                 Mail address
                 <input
                     placeholder={`example@${process.env.INSTANCE_URL}`}
                     class="border p-1 text-center w-72 rounded-full border-black"
+                    name="address"
                     type="email"
+                    required
                 />
             </label>
             <label class="flex flex-col items-center">
                 Password
                 <input
                     class="border p-1 text-center w-72 rounded-full border-black"
+                    name="password"
                     type="password"
+                    required
                 />
             </label>
             <button class="bg-black w-72 p-2 rounded-full text-white"
