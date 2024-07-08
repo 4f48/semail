@@ -1,13 +1,19 @@
 use crate::db;
 use axum::http::StatusCode;
-use axum::{Form, Json};
+use axum::Json;
+use ed25519_dalek::pkcs8::spki::der::pem::LineEnding;
+use ed25519_dalek::pkcs8::{EncodePrivateKey, EncodePublicKey};
+use ed25519_dalek::SigningKey;
 use entity::accounts;
 use entity::accounts::ActiveModel;
 use entity::prelude::Accounts;
+use rand::rngs::OsRng;
+use sea_orm::ActiveValue::Set;
 use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::fmt::Debug;
+use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Payload {
@@ -40,46 +46,58 @@ pub async fn main(Json(payload): Json<Value>) -> (StatusCode, Json<Value>) {
         }
     };
 
+    let mut csprng = OsRng;
+    let signing_key: SigningKey = SigningKey::generate(&mut csprng);
+
     match Accounts::find()
-        .filter(accounts::Column::Name.eq(payload.username))
+        .filter(accounts::Column::Name.eq(&payload.username))
         .all(&db)
         .await
     {
         Ok(results) => match results.first() {
             None => {
                 let account = ActiveModel {
-                    id: Default::default(),
-                    name: Default::default(),
-                    public_key: Default::default(),
-                    private_key: Default::default(),
-                    password: Default::default(),
+                    id: Set(Uuid::now_v7()),
+                    name: Set(payload.username),
+                    public_key: Set(signing_key
+                        .verifying_key()
+                        .to_public_key_pem(LineEnding::LF)
+                        .unwrap()),
+                    private_key: Set(signing_key
+                        .to_pkcs8_pem(LineEnding::LF)
+                        .unwrap()
+                        .parse()
+                        .unwrap()),
+                    password: Set(payload.password), // ABSOLUTELY NOT SECURE, AND I KNOW ABOUT IT! THIS IS JUST THE DEMO IMPLEMENTATION
                 };
+
+                match account.insert(&db).await {
+                    Ok(_) => (
+                        StatusCode::OK,
+                        Json(json!({
+                            "success": "account added to registry"
+                        })),
+                    ),
+                    Err(error) => (
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        Json(json!({
+                            "error": format!("{}", error)
+                        })),
+                    ),
+                }
             }
-            Some(_) => {
-                return (
-                    StatusCode::CONFLICT,
-                    Json(json!({
-                        "error": "an account with this name already exists"
-                    })),
-                )
-            }
-        },
-        Err(error) => {
-            return (
-                StatusCode::INTERNAL_SERVER_ERROR,
+            Some(_) => (
+                StatusCode::CONFLICT,
                 Json(json!({
-                    "error": format!("{}", error)
+                    "error": "an account with this name already exists"
                 })),
-            )
-        }
-    };
-
-    // add more checks and database insert
-
-    (
-        StatusCode::OK,
-        Json(json!({
-            "success": "added account to registry"
-        })),
-    )
+            ),
+        },
+        Err(error) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({
+                "error": format!("{}", error)
+            })),
+        ),
+    }
 }

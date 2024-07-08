@@ -7,7 +7,7 @@ edition = "2021"
 members = [ ".", "entity", "migration" ]
 
 [dependencies]
-axum = { version = "0.7.5", features = [ "default", "multipart" ] }
+axum = "0.7.5"
 serde_json = "1.0.120"
 tokio = { version = "1.38.0", features = [ "full" ] }
 serde = { version = "1.0.203", features = [ "derive" ] }
@@ -19,3 +19,6 @@ entity = { path = "entity" }
 uuid = { version = "1.9.1", features = [ "v7", "fast-rng" ] }
 regex = "1.10.5"
 dotenv = "0.15.0"
+smallvec = "1.13.2"
+ed25519-dalek = { version = "2.1.1", features = [ "rand_core", "pem" ] }
+rand = "0.8.5"
