@@ -1,5 +1,17 @@
 ---
-
+if (Astro.request.method === "POST") {
+    try {
+        const data = await Astro.request.formData();
+        const response = await fetch("http://localhost:25052/auth/register", {
+            method: "POST",
+            body: data,
+        });
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        }
+    }
+}
 ---
 
 <html lang="en" class="h-[100%]">
@@ -12,11 +24,7 @@
     </head>
     <body class="h-[100%] w-[100%] flex flex-col items-center justify-center">
         <h1 class="text-3xl font-bold mb-3">Register an account</h1>
-        <form
-            class="flex flex-col gap-3"
-            method="POST"
-            action="http://localhost:25052/auth/register"
-        >
+        <form class="flex flex-col gap-3" method="POST">
             <label class="flex flex-col items-center">
                 Mail address
                 <input
