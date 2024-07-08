@@ -14,10 +14,10 @@
 </script>
 
 <form method="POST" use:enhance>
-	<Form.Field {form} name="address">
+	<Form.Field {form} name="username">
 		<Form.Control let:attrs>
-			<Form.Label>Address</Form.Label>
-			<Input {...attrs} bind:value={$formData.address} type="email" />
+			<Form.Label>Username</Form.Label>
+			<Input {...attrs} bind:value={$formData.username} type="email" />
 		</Form.Control>
 	</Form.Field>
 	<Form.Field {form} name="password">

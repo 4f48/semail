@@ -1,8 +1,10 @@
-use axum::extract::Multipart;
+use crate::db;
 use axum::http::StatusCode;
-use axum::response::Redirect;
 use axum::{Form, Json};
-use regex::Regex;
+use entity::accounts;
+use entity::accounts::ActiveModel;
+use entity::prelude::Accounts;
+use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::fmt::Debug;
@@ -21,6 +23,52 @@ pub async fn main(Json(payload): Json<Value>) -> (StatusCode, Json<Value>) {
                 StatusCode::BAD_REQUEST,
                 Json(json!({
                     "error": format!("{}", error.to_string())
+                })),
+            )
+        }
+    };
+
+    let db = match db::connect_db().await {
+        Ok(database_connection) => database_connection,
+        Err(error) => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({
+                    "error": format!("{}", error)
+                })),
+            )
+        }
+    };
+
+    match Accounts::find()
+        .filter(accounts::Column::Name.eq(payload.username))
+        .all(&db)
+        .await
+    {
+        Ok(results) => match results.first() {
+            None => {
+                let account = ActiveModel {
+                    id: Default::default(),
+                    name: Default::default(),
+                    public_key: Default::default(),
+                    private_key: Default::default(),
+                    password: Default::default(),
+                };
+            }
+            Some(_) => {
+                return (
+                    StatusCode::CONFLICT,
+                    Json(json!({
+                        "error": "an account with this name already exists"
+                    })),
+                )
+            }
+        },
+        Err(error) => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({
+                    "error": format!("{}", error)
                 })),
             )
         }
