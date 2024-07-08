@@ -21,11 +21,11 @@ export const actions: Actions = {
 
 		const response = await fetch('http://localhost:25052/auth/register', {
 			method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+			headers: {
+				'Content-Type': 'application/json'
+			},
 			body: JSON.stringify({
-				address: form.data.address,
+				username: form.data.username,
 				password: form.data.password
 			})
 		});
