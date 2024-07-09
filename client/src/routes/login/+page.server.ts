@@ -4,6 +4,8 @@ import { superValidate } from 'sveltekit-superforms';
 import { login } from '@/forms';
 import { zod } from 'sveltekit-superforms/adapters';
 
+import { SRPClient } from '@windwalker-io/srp';
+
 export const load: PageServerLoad = async () => {
 	return {
 		form: await superValidate(zod(login))
@@ -19,45 +21,19 @@ export const actions: Actions = {
 			});
 		}
 
-		// const response = await fetch('http://localhost:25052/auth/login', {
-		// 	method: 'POST',
-		// 	headers: {
-		// 		'Content-Type': 'application/json'
-		// 	},
-		// 	body: JSON.stringify({
-		// 		username: form.data.username,
-		// 		password: form.data.password
-		// 	})
-		// });
+		const response = await fetch(
+			'http://localhost:25052/auth/challenge' +
+				new URLSearchParams({
+					identity: form.data.username
+				})
+		);
 
-		login_user(form.data.username, form.data.password);
+		console.debug(response);
 
-		// console.debug(response);
+		// const client = SRPClient.create();
 
 		return {
 			form
 		};
 	}
 };
-
-import { SRPClient } from '@windwalker-io/srp';
-
-// experimental srp client implementation for logining user
-async function login_user(identity: string, password: string) {
-	const client = SRPClient.create();
-	const { salt, verifier } = await client.register(identity, password);
-	console.debug(salt);
-	console.debug(verifier);
-
-	// const response = await fetch('http://localhost:25052/auth/login', {
-	// 	method: 'POST',
-	// 	headers: {
-	// 		'Content-Type': 'application/json'
-	// 	},
-	// 	body: JSON.stringify({
-	//		identity: identity,
-	// 		salt: salt.toString(16),
-	// 		verifier: verifier.toString(16)
-	// 	})
-	// });
-}

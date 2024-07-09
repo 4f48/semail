@@ -70,7 +70,7 @@ pub async fn main(Json(payload): Json<Value>) -> (StatusCode, Json<Value>) {
                         .parse()
                         .unwrap()),
                     salt: Set(payload.salt),
-                    verifier: Set(payload.verifier)
+                    verifier: Set(payload.verifier),
                 };
 
                 match account.insert(&db).await {

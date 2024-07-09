@@ -1,2 +1,2 @@
-pub mod register;
 pub mod challenge;
+pub mod register;

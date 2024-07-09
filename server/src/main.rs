@@ -7,8 +7,8 @@ use axum::{
 };
 use migration::{Migrator, MigratorTrait};
 
-use routes::auth::register::main as register;
 use routes::auth::challenge::main as challenge;
+use routes::auth::register::main as register;
 use routes::get_emails::main as mails;
 use routes::get_users::main as users;
 use routes::receive::main as send;
@@ -25,7 +25,7 @@ async fn main() {
         .route("/", get(|| async { "Hello, World!" }))
         .route("/send", post(send))
         .route("/auth/register", post(register))
-        .route("/auth/challange", post(challenge))
+        .route("/auth/challange", get(challenge))
         .route(
             "/test",
             get(|| async { db::create_test_user().await.unwrap() }),

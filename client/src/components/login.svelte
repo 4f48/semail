@@ -28,5 +28,7 @@
 		</Form.Control>
 	</Form.Field>
 	<Form.Button>Log in</Form.Button>
-	<p class="text-sm text-muted-foreground flex items-center gap-1 self-center">No account? <a href="/register"><Button variant="link" class="m-0 p-0">Create one</Button></a></p>
+	<p class="flex items-center gap-1 self-center text-sm text-muted-foreground">
+		No account? <a href="/register"><Button variant="link" class="m-0 p-0">Create one</Button></a>
+	</p>
 </form>

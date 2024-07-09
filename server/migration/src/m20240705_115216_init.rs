@@ -11,7 +11,7 @@ enum Accounts {
     PublicKey,
     PrivateKey,
     Salt,
-    Verifier
+    Verifier,
 }
 
 #[derive(Iden)]
