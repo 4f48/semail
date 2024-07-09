@@ -17,8 +17,9 @@ use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Payload {
-    username: String,
-    password: String,
+    identity: String,
+    salt: String,
+    verifier: String,
 }
 
 pub async fn main(Json(payload): Json<Value>) -> (StatusCode, Json<Value>) {
@@ -50,7 +51,7 @@ pub async fn main(Json(payload): Json<Value>) -> (StatusCode, Json<Value>) {
     let signing_key: SigningKey = SigningKey::generate(&mut csprng);
 
     match Accounts::find()
-        .filter(accounts::Column::Name.eq(&payload.username))
+        .filter(accounts::Column::Name.eq(&payload.identity))
         .all(&db)
         .await
     {
@@ -58,7 +59,7 @@ pub async fn main(Json(payload): Json<Value>) -> (StatusCode, Json<Value>) {
             None => {
                 let account = ActiveModel {
                     id: Set(Uuid::now_v7()),
-                    name: Set(payload.username),
+                    name: Set(payload.identity),
                     public_key: Set(signing_key
                         .verifying_key()
                         .to_public_key_pem(LineEnding::LF)
@@ -68,7 +69,8 @@ pub async fn main(Json(payload): Json<Value>) -> (StatusCode, Json<Value>) {
                         .unwrap()
                         .parse()
                         .unwrap()),
-                    password: Set(payload.password), // ABSOLUTELY NOT SECURE, AND I KNOW ABOUT IT! THIS IS JUST THE DEMO IMPLEMENTATION
+                    salt: Set(payload.salt),
+                    verifier: Set(payload.verifier)
                 };
 
                 match account.insert(&db).await {

@@ -10,7 +10,8 @@ enum Accounts {
     Name,
     PublicKey,
     PrivateKey,
-    Password,
+    Salt,
+    Verifier
 }
 
 #[derive(Iden)]
@@ -59,7 +60,8 @@ impl MigrationTrait for Migration {
                             .unique_key()
                             .not_null(),
                     )
-                    .col(ColumnDef::new(Accounts::Password).string().not_null())
+                    .col(ColumnDef::new(Accounts::Salt).string().not_null())
+                    .col(ColumnDef::new(Accounts::Verifier).string().not_null())
                     .to_owned(),
             )
             .await?;
