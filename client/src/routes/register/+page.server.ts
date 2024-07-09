@@ -19,21 +19,45 @@ export const actions: Actions = {
 			});
 		}
 
-		const response = await fetch('http://localhost:25052/auth/register', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				username: form.data.username,
-				password: form.data.password
-			})
-		});
+		// const response = await fetch('http://localhost:25052/auth/register', {
+		// 	method: 'POST',
+		// 	headers: {
+		// 		'Content-Type': 'application/json'
+		// 	},
+		// 	body: JSON.stringify({
+		// 		username: form.data.username,
+		// 		password: form.data.password
+		// 	})
+		// });
 
-		console.debug(response);
+		register_user(form.data.username, form.data.password);
+
+		// console.debug(response);
 
 		return {
 			form
 		};
 	}
 };
+
+import { SRPClient } from '@windwalker-io/srp';
+
+// experimental srp client implementation for registering user
+async function register_user(identity: string, password: string) {
+	const client = SRPClient.create();
+	const { salt, verifier } = await client.register(identity, password);
+	console.debug(salt);
+	console.debug(verifier);
+
+	// const response = await fetch('http://localhost:25052/auth/register', {
+	// 	method: 'POST',
+	// 	headers: {
+	// 		'Content-Type': 'application/json'
+	// 	},
+	// 	body: JSON.stringify({
+	//		identity: identity,
+	// 		salt: salt.toString(16),
+	// 		verifier: verifier.toString(16)
+	// 	})
+	// });
+}
