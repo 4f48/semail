@@ -2,13 +2,13 @@
 	import * as Form from '@/components/ui/form';
 	import { Input } from '@/components/ui/input';
 	import { Button } from '@/components/ui/button';
-	import { register, type Register } from '@/forms';
+	import { login, type Login } from '@/forms';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
-	export let data: SuperValidated<Infer<Register>>;
+	export let data: SuperValidated<Infer<Login>>;
 	const form = superForm(data, {
-		validators: zodClient(register)
+		validators: zodClient(login)
 	});
 
 	const { form: formData, enhance } = form;
@@ -27,6 +27,6 @@
 			<Input {...attrs} bind:value={$formData.password} type="password" />
 		</Form.Control>
 	</Form.Field>
-	<Form.Button>Register</Form.Button>
-	<p class="text-sm text-muted-foreground flex items-center gap-1 self-center">Already have an account? <a href="/login"><Button variant="link" class="m-0 p-0">Log in</Button></a></p>
+	<Form.Button>Log in</Form.Button>
+	<p class="text-sm text-muted-foreground flex items-center gap-1 self-center">No account? <a href="/register"><Button variant="link" class="m-0 p-0">Create one</Button></a></p>
 </form>
