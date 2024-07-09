@@ -25,7 +25,7 @@ async fn main() {
         .route("/", get(|| async { "Hello, World!" }))
         .route("/send", post(send))
         .route("/auth/register", post(register))
-        .route("/auth/challange", get(challenge))
+        .route("/auth/challenge", get(challenge))
         .route(
             "/test",
             get(|| async { db::create_test_user().await.unwrap() }),

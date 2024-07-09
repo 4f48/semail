@@ -44,7 +44,7 @@ import { SRPClient } from '@windwalker-io/srp';
 
 // experimental srp client implementation for registering user
 async function register_user(identity: string, password: string) {
-	const client = SRPClient.create();
+	const client = SRPClient.create().setHasher("sha512");
 	const { salt, verifier } = await client.register(identity, password);
 	console.debug(salt);
 	console.debug(verifier);

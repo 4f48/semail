@@ -51,7 +51,7 @@ pub async fn main(Query(params): Query<HashMap<String, String>>) -> (StatusCode,
         }
     };
 
-    match Accounts::find()
+    return match Accounts::find()
         .filter(accounts::Column::Name.eq(params.identity))
         .all(&db)
         .await
@@ -59,16 +59,24 @@ pub async fn main(Query(params): Query<HashMap<String, String>>) -> (StatusCode,
         Ok(results) => match results.first() {
             Some(result) => {
                 let (salt, verifier) = (&result.salt, &result.verifier);
-                
+                let b = [0u8; 64];
+                let B = server.compute_public_ephemeral(&b, (&verifier).as_ref());
+                (
+                    StatusCode::OK,
+                    Json(json!({
+                        "secret": format!("{:?}", b),
+                        "public": format!("{:?}", B)
+                    }))
+                )
             },
-            None => return (
+            None => (
                 StatusCode::BAD_REQUEST,
                 Json(json!({
                     "error": "this user does not exist"
                 }))
             )
         },
-        Err(error) => return (
+        Err(error) => (
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(json!({
                 "error": format!("{}", error)

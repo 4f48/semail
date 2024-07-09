@@ -21,6 +21,9 @@ export const actions: Actions = {
 			});
 		}
 
+		const client = SRPClient.create();
+		let a = client.generatePublic(client.getKey());
+
 		const response = await fetch(
 			'http://localhost:25052/auth/challenge' +
 				new URLSearchParams({
@@ -30,7 +33,7 @@ export const actions: Actions = {
 
 		console.debug(response);
 
-		// const client = SRPClient.create();
+		
 
 		return {
 			form
