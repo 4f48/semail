@@ -1,21 +1,20 @@
-use std::str::FromStr;
-use crate::common::opaque::Default;
 use crate::AppState;
+use crate::common::db;
+use crate::common::opaque::Default;
+
+use entity::accounts::ActiveModel;
+
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
-use base64::prelude::BASE64_STANDARD;
 use base64::Engine;
+use base64::prelude::BASE64_STANDARD;
 use opaque_ke::ServerRegistration;
-use sea_orm::{ActiveModelTrait, EntityTrait, Set};
+use sea_orm::{ActiveModelTrait, Set};
 use serde::Deserialize;
-use serde_json::{json, Value};
-use uuid::{Uuid, uuid};
-use entity::accounts::ActiveModel;
-use rand::rngs::OsRng;
-use entity::accounts;
-use entity::prelude::Accounts;
-use crate::common::db;
+use serde_json::{Value, json};
+use std::str::FromStr;
+use uuid::Uuid;
 
 #[derive(Deserialize)]
 struct Payload {
@@ -44,7 +43,7 @@ pub async fn main(
             Ok(result) => result,
             Err(error) => {
                 return (
-                    StatusCode::INTERNAL_SERVER_ERROR,
+                    StatusCode::BAD_REQUEST,
                     Json(json!({
                         "error": format!("{}", error)
                     })),
@@ -54,7 +53,7 @@ pub async fn main(
             Ok(upload) => upload,
             Err(error) => {
                 return (
-                    StatusCode::INTERNAL_SERVER_ERROR,
+                    StatusCode::BAD_REQUEST,
                     Json(json!({
                         "error": format!("{}", error)
                     })),
@@ -75,7 +74,7 @@ pub async fn main(
     let name = match register_flows.get(match &Uuid::from_str(&payload.flow_id) {
         Ok(uuid) => uuid,
         Err(error) => return (
-            StatusCode::INTERNAL_SERVER_ERROR,
+            StatusCode::BAD_REQUEST,
             Json(json!({
                 "error": format!("{}", error)
             }))
