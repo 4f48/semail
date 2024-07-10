@@ -1,22 +1,23 @@
 mod common;
 mod routes;
 
-use crate::common::opaque::Default;
+use common::db;
+use common::opaque::Default;
+use routes::auth::register::finish::main as finish;
+use routes::auth::register::start::main as start;
+use routes::get_emails::main as mails;
+use routes::get_users::main as users;
+use routes::receive::main as send;
+
+use migration::{Migrator, MigratorTrait};
+
 use argon2::password_hash::rand_core::OsRng;
 use axum::{
     routing::{get, post},
     Router,
 };
-use common::db;
-use migration::{Migrator, MigratorTrait};
 use opaque_ke::keypair::PrivateKey;
 use opaque_ke::{Ristretto255, ServerSetup};
-
-use routes::auth::register::finalize::main as finalize;
-use routes::auth::register::request::main as request;
-use routes::get_emails::main as mails;
-use routes::get_users::main as users;
-use routes::receive::main as send;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -37,16 +38,17 @@ async fn main() {
         .unwrap();
 
     let app = Router::new()
-        .route("/", get(|| async { "Hello, World!" }))
         .route("/send", post(send))
-        .route("/auth/register/request", post(request))
-        .route("/auth/register/finalize", post(finalize))
+        .route("/auth/register/start", post(start))
+        .route("/auth/register/finish", post(finish))
+        // --- TESTING ROUTES, TO BE REMOVED ---
         .route(
             "/test",
             get(|| async { db::create_test_user().await.unwrap() }),
         )
         .route("/get", get(users))
         .route("/mails", get(mails))
+        // ^^^ TESTING ROUTES, TO BE REMOVED ^^^
         .with_state(state);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:25052")
