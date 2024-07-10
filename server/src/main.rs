@@ -1,10 +1,11 @@
-mod db;
 mod routes;
+mod common;
 
 use axum::{
-    routing::{get, post},
     Router,
+    routing::{get, post},
 };
+use common::db;
 use migration::{Migrator, MigratorTrait};
 
 use routes::auth::register::finalize::main as finalize;

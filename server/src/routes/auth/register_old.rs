@@ -1,9 +1,6 @@
-use crate::db;
+use crate::common::db;
 use axum::http::StatusCode;
 use axum::Json;
-use ed25519_dalek::pkcs8::spki::der::pem::LineEnding;
-use ed25519_dalek::pkcs8::{EncodePrivateKey, EncodePublicKey};
-use ed25519_dalek::SigningKey;
 use entity::accounts;
 use entity::accounts::ActiveModel;
 use entity::prelude::Accounts;
@@ -48,7 +45,7 @@ pub async fn _main(Json(payload): Json<Value>) -> (StatusCode, Json<Value>) {
     };
 
     let mut csprng = OsRng;
-    let signing_key: SigningKey = SigningKey::generate(&mut csprng);
+    // let signing_key: SigningKey = SigningKey::generate(&mut csprng);
 
     match Accounts::find()
         .filter(accounts::Column::Name.eq(&payload.identity))
@@ -57,7 +54,7 @@ pub async fn _main(Json(payload): Json<Value>) -> (StatusCode, Json<Value>) {
     {
         Ok(results) => match results.first() {
             None => {
-                let account = ActiveModel {
+                /*let account = ActiveModel {
                     id: Set(Uuid::now_v7()),
                     name: Set(payload.identity),
                     public_key: Set(signing_key
@@ -86,7 +83,8 @@ pub async fn _main(Json(payload): Json<Value>) -> (StatusCode, Json<Value>) {
                             "error": format!("{}", error)
                         })),
                     ),
-                }
+                }*/
+                todo!();
             }
             Some(_) => (
                 StatusCode::CONFLICT,

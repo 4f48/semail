@@ -24,9 +24,9 @@ export const actions: Actions = {
 
 		const registration = new Registration();
 		const registrationRequest = registration.start(form.data.password);
-		
+
 		// store backend URL later in .env
-		const response = await fetch('http://localhost:25052/auth/register', {
+		const response = await fetch('http://localhost:25052/auth/register/request', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
@@ -35,16 +35,7 @@ export const actions: Actions = {
 			})
 		});
 
-		// const response = await fetch('http://localhost:25052/auth/register', {
-		// 	method: 'POST',
-		// 	headers: {
-		// 		'Content-Type': 'application/json'
-		// 	},
-		// 	body: JSON.stringify({
-		// 		username: form.data.username,
-		// 		password: form.data.password
-		// 	})
-		// });
+		
 
 		// console.debug(response);
 

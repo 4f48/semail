@@ -20,5 +20,6 @@ uuid = { version = "1.9.1", features = [ "v7", "fast-rng" ] }
 regex = "1.10.5"
 dotenv = "0.15.0"
 smallvec = "1.13.2"
-ed25519-dalek = { version = "2.1.1", features = [ "rand_core", "pem" ] }
 rand = "0.8.5"
+opaque-ke = { version = "3.0.0-pre.4", features = [ "default", "argon2" ] }
+argon2 = "0.5.3"

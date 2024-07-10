@@ -1,4 +1,4 @@
-use crate::db;
+use crate::common::db;
 use axum::http::StatusCode;
 use axum::Json;
 use dotenv::dotenv;
