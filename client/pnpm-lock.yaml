@@ -11,6 +11,9 @@ importers:
       '@47ng/opaque-client':
         specifier: ^2.1.5
         version: 2.1.5
+      '@47ng/opaque-server':
+        specifier: ^2.1.5
+        version: 2.1.5
       bits-ui:
         specifier: ^0.21.12
         version: 0.21.12(svelte@4.2.18)
@@ -20,6 +23,9 @@ importers:
       formsnap:
         specifier: ^1.0.1
         version: 1.0.1(svelte@4.2.18)(sveltekit-superforms@2.15.2(@sveltejs/kit@2.5.18(@sveltejs/vite-plugin-svelte@3.1.1(svelte@4.2.18)(vite@5.3.3(@types/node@20.14.10)))(svelte@4.2.18)(vite@5.3.3(@types/node@20.14.10)))(svelte@4.2.18))
+      server:
+        specifier: link:@47g/opaque/server
+        version: link:@47g/opaque/server
       sveltekit-superforms:
         specifier: ^2.15.2
         version: 2.15.2(@sveltejs/kit@2.5.18(@sveltejs/vite-plugin-svelte@3.1.1(svelte@4.2.18)(vite@5.3.3(@types/node@20.14.10)))(svelte@4.2.18)(vite@5.3.3(@types/node@20.14.10)))(svelte@4.2.18)
@@ -110,6 +116,9 @@ packages:
 
   '@47ng/opaque-client@2.1.5':
     resolution: {integrity: sha512-uYxNuRtBlPEfTrxHqmDARDIiqwEVWzIL5C3I1kmX7P1cMNtjV0/mmUW73TX+l0+n3GGEivx/aCOhek209Y+LJw==}
+
+  '@47ng/opaque-server@2.1.5':
+    resolution: {integrity: sha512-5zWFt4bedJTaYwNT+F3kinZrAy1dpcK7wWg2co6fVHGnjR5Y9bAjKkramNwUwbMjKkaCLVJGbX5oqxZWiieWuQ==}
 
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
@@ -2048,6 +2057,8 @@ packages:
 snapshots:
 
   '@47ng/opaque-client@2.1.5': {}
+
+  '@47ng/opaque-server@2.1.5': {}
 
   '@alloc/quick-lru@5.2.0': {}
 

@@ -25,6 +25,7 @@ pub async fn main(
     State(state): State<AppState>,
     Json(payload): Json<Value>,
 ) -> (StatusCode, Json<Value>) {
+    dbg!("Request!!");
     let payload: Payload = match serde_json::from_value(payload) {
         Ok(payload) => payload,
         Err(error) => {
@@ -43,7 +44,7 @@ pub async fn main(
             return (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(json!({
-                    "error": format!("{}", error)
+                    "error": format!("0 {}", error)
                 })),
             )
         }
@@ -89,7 +90,7 @@ pub async fn main(
                                     return (
                                         StatusCode::INTERNAL_SERVER_ERROR,
                                         Json(json!({
-                                            "error": format!("{}", error)
+                                            "error": format!("1 {}", error)
                                         })),
                                     )
                                 }
@@ -110,7 +111,7 @@ pub async fn main(
                     Err(error) => (
                         StatusCode::INTERNAL_SERVER_ERROR,
                         Json(json!({
-                            "error": format!("{}", error)
+                            "error": format!("2 {}", error)
                         })),
                     ),
                 }
@@ -125,7 +126,7 @@ pub async fn main(
         Err(error) => (
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(json!({
-                "error": format!("{}", error)
+                "error": format!("3 {}", error)
             })),
         ),
     }

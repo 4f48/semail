@@ -4,9 +4,7 @@ import { superValidate } from 'sveltekit-superforms';
 import { register } from '@/forms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-import { Registration } from '@47ng/opaque-client';
-import { request } from 'http';
-import { brotliCompressSync } from 'zlib';
+import { Registration } from '@47ng/opaque-server';
 
 export const load: PageServerLoad = async () => {
 	return {
@@ -44,7 +42,10 @@ export const actions: Actions = {
 
 		let body = await start.json();
 
-		const registrationRecord = registration.finish(form.data.password, body.response);
+		const registrationRecord = registration.finish(
+			form.data.password,
+			Uint8Array.from(atob(body.response), (c) => c.charCodeAt(0))
+		);
 		const finish = await fetch('http://localhost:25052/auth/register/finish', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -54,10 +55,12 @@ export const actions: Actions = {
 			})
 		});
 
+		console.debug(await finish.json());
+
 		if (!finish.ok) {
 			return fail(finish.status, {
 				form
-			})
+			});
 		}
 
 		return {
