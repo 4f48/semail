@@ -61,8 +61,6 @@ pub async fn create_test_user() -> Result<(), DbErr> {
     let account = ActiveModel {
         id: Set(Uuid::now_v7()),
         name: Set(String::from("test")),
-        public_key: Set(String::from("abc123")),
-        private_key: Set(String::from("SuperSecurePrivateKey")),
         verifier: Set(String::from("SuperSecurePasswordHash")),
     };
 

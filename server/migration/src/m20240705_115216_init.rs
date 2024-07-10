@@ -8,9 +8,6 @@ enum Accounts {
     Table,
     Id,
     Name,
-    PublicKey,
-    PrivateKey,
-    Salt,
     Verifier,
 }
 

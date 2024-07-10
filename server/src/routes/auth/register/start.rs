@@ -1,6 +1,6 @@
-use crate::AppState;
-use crate::common::opaque::Default;
 use crate::common::db;
+use crate::common::opaque::Default;
+use crate::AppState;
 
 use entity::accounts;
 use entity::prelude::Accounts;
@@ -9,10 +9,10 @@ use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
 use base64::prelude::*;
-use opaque_ke::{RegistrationRequest, ServerRegistration};
+use opaque_ke::ServerRegistration;
 use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use serde::Deserialize;
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 use uuid::Uuid;
 
 #[derive(Deserialize)]
@@ -82,59 +82,51 @@ pub async fn main(
                     payload.username.as_bytes(),
                 ) {
                     Ok(server_start_result) => {
-                        let response =
-                            BASE64_STANDARD.encode(match bincode::serialize(&server_start_result.message) {
+                        let response = BASE64_STANDARD.encode(
+                            match bincode::serialize(&server_start_result.message) {
                                 Ok(response) => response,
                                 Err(error) => {
                                     return (
                                         StatusCode::INTERNAL_SERVER_ERROR,
                                         Json(json!({
-                                "error": format!("{}", error)
-                            })),
+                                            "error": format!("{}", error)
+                                        })),
                                     )
                                 }
-                            });
+                            },
+                        );
 
                         let flow_id = Uuid::now_v7();
-                        let mut register_flows = match state.register_flows.lock() {
-                            Ok(register_flow) => register_flow,
-                            Err(error) => return (
-                                StatusCode::INTERNAL_SERVER_ERROR,
-                                Json(json!({
-                        "error": format!("{}", error)
-                    }))
-                            )
-                        };
-                        register_flows.insert(flow_id, payload.username).to_owned();
+                        state.flows.register.insert(flow_id, payload.username);
 
                         (
                             StatusCode::OK,
                             Json(json!({
-                    "flow_id": flow_id,
-                    "response": response
-                })),
+                                "flow_id": flow_id,
+                                "response": response
+                            })),
                         )
                     }
                     Err(error) => (
                         StatusCode::INTERNAL_SERVER_ERROR,
                         Json(json!({
-                "error": format!("{}", error)
-            })),
+                            "error": format!("{}", error)
+                        })),
                     ),
                 }
-            },
+            }
             Some(_) => (
                 StatusCode::BAD_REQUEST,
                 Json(json!({
                     "error": "a user with this name already exists"
-                }))
-            )
+                })),
+            ),
         },
         Err(error) => (
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(json!({
                 "error": format!("{}", error)
-            }))
-        )
+            })),
+        ),
     }
 }

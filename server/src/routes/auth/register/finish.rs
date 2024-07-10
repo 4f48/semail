@@ -1,18 +1,18 @@
-use crate::AppState;
 use crate::common::db;
 use crate::common::opaque::Default;
+use crate::AppState;
 
 use entity::accounts::ActiveModel;
 
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
-use base64::Engine;
 use base64::prelude::BASE64_STANDARD;
+use base64::Engine;
 use opaque_ke::ServerRegistration;
 use sea_orm::{ActiveModelTrait, Set};
 use serde::Deserialize;
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 use std::str::FromStr;
 use uuid::Uuid;
 
@@ -62,44 +62,43 @@ pub async fn main(
         },
     );
 
-    let register_flows = match state.register_flows.lock() {
-        Ok(register_flows) => register_flows,
-        Err(error) => return (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(json!({
-                "error": format!("{}", error)
-            }))
-        )
-    };
-    let name = match register_flows.get(match &Uuid::from_str(&payload.flow_id) {
+    let uuid = match Uuid::from_str(&payload.flow_id) {
         Ok(uuid) => uuid,
-        Err(error) => return (
-            StatusCode::BAD_REQUEST,
-            Json(json!({
-                "error": format!("{}", error)
-            }))
-        )
-    }) {
+        Err(error) => {
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(json!({
+                    "error": format!("{}", error)
+                })),
+            )
+        }
+    };
+
+    let name = match state.flows.register.get(&uuid) {
         Some(username) => username,
-        None => return (
-            StatusCode::BAD_REQUEST,
-            Json(json!({
-                "error": "this registration flow doesn't exist"
-            }))
-        )
+        None => {
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(json!({
+                    "error": "this registration flow doesn't exist"
+                })),
+            )
+        }
     };
 
     let account = ActiveModel {
         id: Set(Uuid::now_v7()),
-        name: Set(name.to_string()),
+        name: Set(name.value().to_string()),
         verifier: Set(BASE64_STANDARD.encode(match bincode::serialize(&verifier) {
             Ok(verifier) => verifier,
-            Err(error) => return (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(json!({
-                    "error": format!("{}", error)
-                }))
-            )
+            Err(error) => {
+                return (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(json!({
+                        "error": format!("{}", error)
+                    })),
+                )
+            }
         })),
     };
 
@@ -114,19 +113,19 @@ pub async fn main(
             )
         }
     };
-    
+
     match account.insert(&db).await {
         Ok(_) => (
             StatusCode::OK,
             Json(json!({
                 "success": "user registration successfully completed"
-            }))
+            })),
         ),
         Err(error) => (
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(json!({
                 "error": format!("{}", error)
-            }))
-        )
+            })),
+        ),
     }
 }
