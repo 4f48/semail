@@ -1,18 +1,19 @@
-use crate::common::opaque::Default;
 use crate::AppState;
+use crate::common::opaque::Default;
+use crate::common::db;
+
+use entity::accounts;
+use entity::prelude::Accounts;
 
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
-use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use base64::prelude::*;
 use opaque_ke::{RegistrationRequest, ServerRegistration};
+use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use serde::Deserialize;
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use uuid::Uuid;
-use entity::accounts;
-use entity::prelude::Accounts;
-use crate::common::db;
 
 #[derive(Deserialize)]
 struct Payload {
@@ -57,27 +58,24 @@ pub async fn main(
             None => {
                 match ServerRegistration::<Default>::start(
                     &state.server_setup,
-                    match BASE64_STANDARD.decode(payload.request) {
-                        Ok(request) => {
-                            let message: RegistrationRequest<Default> = match bincode::deserialize(&request) {
-                                Ok(message) => message,
-                                Err(error) => {
-                                    return (
-                                        StatusCode::INTERNAL_SERVER_ERROR,
-                                        Json(json!({
-                                "error": format!("{}", error)
-                            })),
-                                    )
-                                }
-                            };
-                            message
-                        }
+                    match bincode::deserialize(match &BASE64_STANDARD.decode(payload.request) {
+                        Ok(result) => result,
                         Err(error) => {
                             return (
-                                StatusCode::INTERNAL_SERVER_ERROR,
+                                StatusCode::BAD_REQUEST,
                                 Json(json!({
-                        "error": format!("{}", error)
-                    })),
+                                    "error": format!("{}", error)
+                                })),
+                            )
+                        }
+                    }) {
+                        Ok(upload) => upload,
+                        Err(error) => {
+                            return (
+                                StatusCode::BAD_REQUEST,
+                                Json(json!({
+                                    "error": format!("{}", error)
+                                })),
                             )
                         }
                     },
