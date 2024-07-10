@@ -7,7 +7,7 @@ use axum::Json;
 use base64::prelude::BASE64_STANDARD;
 use base64::Engine;
 use opaque_ke::ServerRegistration;
-use sea_orm::{EntityTrait, Set};
+use sea_orm::{ActiveModelTrait, EntityTrait, Set};
 use serde::Deserialize;
 use serde_json::{json, Value};
 use uuid::{Uuid, uuid};
@@ -15,6 +15,7 @@ use entity::accounts::ActiveModel;
 use rand::rngs::OsRng;
 use entity::accounts;
 use entity::prelude::Accounts;
+use crate::common::db;
 
 #[derive(Deserialize)]
 struct Payload {
@@ -103,5 +104,30 @@ pub async fn main(
         })),
     };
 
-    todo!();
+    let db = match db::connect_db().await {
+        Ok(database_connection) => database_connection,
+        Err(error) => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({
+                    "error": format!("{}", error)
+                })),
+            )
+        }
+    };
+    
+    match account.insert(&db).await {
+        Ok(_) => (
+            StatusCode::OK,
+            Json(json!({
+                "success": "user registration successfully completed"
+            }))
+        ),
+        Err(error) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({
+                "error": format!("{}", error)
+            }))
+        )
+    }
 }

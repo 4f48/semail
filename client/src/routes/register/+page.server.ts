@@ -54,7 +54,11 @@ export const actions: Actions = {
 			})
 		});
 
-		console.debug(finish.status);
+		if (!finish.ok) {
+			return fail(finish.status, {
+				form
+			})
+		}
 
 		return {
 			form
