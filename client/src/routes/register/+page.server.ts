@@ -6,6 +6,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 
 import { Registration } from '@47ng/opaque-client';
 import { request } from 'http';
+import { brotliCompressSync } from 'zlib';
 
 export const load: PageServerLoad = async () => {
 	return {
@@ -26,18 +27,33 @@ export const actions: Actions = {
 		const registrationRequest = registration.start(form.data.password);
 
 		// store backend URL later in .env
-		const response = await fetch('http://localhost:25052/auth/register/request', {
+		const start = await fetch('http://localhost:25052/auth/register/start', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
-				uesrname: form.data.username,
-				request: Buffer.from(registrationRequest).toString("base64"),
+				username: form.data.username,
+				request: Buffer.from(registrationRequest).toString('base64')
 			})
 		});
 
-		
+		if (!start.ok) {
+			return fail(start.status, {
+				form
+			});
+		}
 
-		// console.debug(response);
+		let body = await start.json();
+
+		const registrationRecord = registration.finish(form.data.password, body.response);
+		const finish = await fetch('http://localhost:25052/auth/register/finish', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				result: Buffer.from(registrationRecord).toString('base64')
+			})
+		});
+
+		console.debug(finish.status);
 
 		return {
 			form
