@@ -25,7 +25,6 @@ pub async fn main(
     State(state): State<AppState>,
     Json(payload): Json<Value>,
 ) -> (StatusCode, Json<Value>) {
-    dbg!("Request!!");
     let payload: Payload = match serde_json::from_value(payload) {
         Ok(payload) => payload,
         Err(error) => {
@@ -44,7 +43,7 @@ pub async fn main(
             return (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(json!({
-                    "error": format!("0 {}", error)
+                    "error": format!("{}", error)
                 })),
             )
         }
@@ -83,19 +82,25 @@ pub async fn main(
                     payload.username.as_bytes(),
                 ) {
                     Ok(server_start_result) => {
+                        
                         let response = BASE64_STANDARD.encode(
                             match bincode::serialize(&server_start_result.message) {
-                                Ok(response) => response,
+                                Ok(response) => { 
+                                    dbg!(&response.len());
+                                    response 
+                                },
                                 Err(error) => {
                                     return (
                                         StatusCode::INTERNAL_SERVER_ERROR,
                                         Json(json!({
-                                            "error": format!("1 {}", error)
+                                            "error": format!("{}", error)
                                         })),
                                     )
                                 }
                             },
                         );
+                        
+                        dbg!(&response);
 
                         let flow_id = Uuid::now_v7();
                         state.flows.register.insert(flow_id, payload.username);
@@ -111,7 +116,7 @@ pub async fn main(
                     Err(error) => (
                         StatusCode::INTERNAL_SERVER_ERROR,
                         Json(json!({
-                            "error": format!("2 {}", error)
+                            "error": format!("{}", error)
                         })),
                     ),
                 }
@@ -126,7 +131,7 @@ pub async fn main(
         Err(error) => (
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(json!({
-                "error": format!("3 {}", error)
+                "error": format!("{}", error)
             })),
         ),
     }

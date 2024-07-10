@@ -45,6 +45,7 @@
 	"dependencies": {
 		"@47ng/opaque-client": "^2.1.5",
 		"@47ng/opaque-server": "^2.1.5",
+		"bincode-ts": "^0.1.1",
 		"bits-ui": "^0.21.12",
 		"clsx": "^2.1.1",
 		"formsnap": "^1.0.1",

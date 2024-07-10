@@ -32,11 +32,23 @@ pub async fn main(
             return (
                 StatusCode::BAD_REQUEST,
                 Json(json!({
-                    "error": format!("{}", error)
+                    "error": format!("0 {}", error)
                 })),
             )
         }
     };
+
+    return (
+        StatusCode::OK,
+        Json(json!({
+            "base64": payload.result
+        }))
+    );
+    
+    let decoded = BASE64_STANDARD.decode(payload.result).unwrap(); dbg!(&decoded);
+    let deserialized: ServerRegistration<Default> = bincode::deserialize(&decoded).unwrap(); dbg!(deserialized);
+    
+    todo!();
 
     let verifier = ServerRegistration::<Default>::finish(
         match bincode::deserialize(match &BASE64_STANDARD.decode(payload.result) {
@@ -45,7 +57,7 @@ pub async fn main(
                 return (
                     StatusCode::BAD_REQUEST,
                     Json(json!({
-                        "error": format!("{}", error)
+                        "error": format!("1 {}", error)
                     })),
                 )
             }
@@ -55,7 +67,7 @@ pub async fn main(
                 return (
                     StatusCode::BAD_REQUEST,
                     Json(json!({
-                        "error": format!("{}", error)
+                        "error": format!("2 {}", error)
                     })),
                 )
             }
@@ -68,7 +80,7 @@ pub async fn main(
             return (
                 StatusCode::BAD_REQUEST,
                 Json(json!({
-                    "error": format!("{}", error)
+                    "error": format!("3 {}", error)
                 })),
             )
         }
