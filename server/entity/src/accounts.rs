@@ -9,10 +9,6 @@ pub struct Model {
     pub id: Uuid,
     #[sea_orm(unique)]
     pub name: String,
-    #[sea_orm(unique)]
-    pub public_key: String,
-    #[sea_orm(unique)]
-    pub private_key: String,
     pub verifier: String,
 }
 
