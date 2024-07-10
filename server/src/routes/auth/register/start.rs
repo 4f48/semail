@@ -8,6 +8,7 @@ use base64::prelude::*;
 use opaque_ke::{RegistrationRequest, ServerRegistration};
 use serde::Deserialize;
 use serde_json::{json, Value};
+use uuid::Uuid;
 
 #[derive(Deserialize)]
 struct Payload {
@@ -73,9 +74,22 @@ pub async fn main(
                     }
                 });
 
+            let flow_id = Uuid::now_v7();
+            let mut register_flows = match state.register_flows.lock() {
+                Ok(register_flow) => register_flow,
+                Err(error) => return (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(json!({
+                        "error": format!("{}", error)
+                    }))
+                )
+            };
+            register_flows.insert(flow_id, payload.username).to_owned();
+
             (
                 StatusCode::OK,
                 Json(json!({
+                    "flow_id": flow_id,
                     "response": response
                 })),
             )

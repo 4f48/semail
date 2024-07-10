@@ -1,6 +1,8 @@
 mod common;
 mod routes;
 
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
 use common::db;
 use common::opaque::Default;
 use routes::auth::register::finish::main as finish;
@@ -18,10 +20,13 @@ use axum::{
 };
 use opaque_ke::keypair::PrivateKey;
 use opaque_ke::{Ristretto255, ServerSetup};
+use uuid::Uuid;
 
 #[derive(Clone)]
 pub struct AppState {
     pub server_setup: ServerSetup<Default, PrivateKey<Ristretto255>>,
+    pub register_flows: Arc<Mutex<HashMap<Uuid, String>>>,
+    pub login_flows: Arc<Mutex<HashMap<Uuid, String>>> // prepare for login flows session storage
 }
 
 #[tokio::main]
@@ -31,7 +36,11 @@ async fn main() {
     let mut rng = OsRng;
     let server_setup = ServerSetup::<Default>::new(&mut rng);
 
-    let state = AppState { server_setup };
+    let state = AppState { 
+        server_setup,
+        register_flows: Arc::new(Mutex::new(HashMap::new().to_owned())),
+        login_flows: Arc::new(Mutex::new(HashMap::new().to_owned()))
+    };
 
     Migrator::up(&db::connect_db().await.unwrap(), None)
         .await

@@ -49,6 +49,7 @@ export const actions: Actions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
+				flow_id: body.flow_id,
 				result: Buffer.from(registrationRecord).toString('base64')
 			})
 		});
