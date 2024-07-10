@@ -29,7 +29,7 @@ pub async fn main(Json(payload): Json<Value>) -> (StatusCode, Json<Value>) {
             return (
                 StatusCode::BAD_REQUEST,
                 Json(json!({
-                    "error": format!("{}", error.to_string())
+                    "error": format!("{}", error)
                 })),
             )
         }

@@ -2,15 +2,12 @@ use crate::common::db;
 use axum::http::StatusCode;
 use axum::Json;
 use entity::accounts;
-use entity::accounts::ActiveModel;
 use entity::prelude::Accounts;
-use rand::rngs::OsRng;
-use sea_orm::ActiveValue::Set;
-use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter};
+// use rand::rngs::OsRng;
+use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::fmt::Debug;
-use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Payload {
@@ -44,7 +41,7 @@ pub async fn _main(Json(payload): Json<Value>) -> (StatusCode, Json<Value>) {
         }
     };
 
-    let mut csprng = OsRng;
+    // let mut csprng = OsRng;
     // let signing_key: SigningKey = SigningKey::generate(&mut csprng);
 
     match Accounts::find()

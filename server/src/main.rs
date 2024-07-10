@@ -1,16 +1,16 @@
 mod common;
 mod routes;
 
+use crate::common::opaque::Default;
 use argon2::password_hash::rand_core::OsRng;
 use axum::{
     routing::{get, post},
     Router,
 };
-use opaque_ke::keypair::PrivateKey;
-use opaque_ke::{Ristretto255, ServerSetup};
 use common::db;
 use migration::{Migrator, MigratorTrait};
-use crate::common::opaque::Default;
+use opaque_ke::keypair::PrivateKey;
+use opaque_ke::{Ristretto255, ServerSetup};
 
 use routes::auth::register::finalize::main as finalize;
 use routes::auth::register::request::main as request;
@@ -31,7 +31,7 @@ async fn main() {
     let server_setup = ServerSetup::<Default>::new(&mut rng);
 
     let state = AppState { server_setup };
-    
+
     Migrator::up(&db::connect_db().await.unwrap(), None)
         .await
         .unwrap();
