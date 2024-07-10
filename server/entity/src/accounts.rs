@@ -13,7 +13,6 @@ pub struct Model {
     pub public_key: String,
     #[sea_orm(unique)]
     pub private_key: String,
-    pub salt: String,
     pub verifier: String,
 }
 
