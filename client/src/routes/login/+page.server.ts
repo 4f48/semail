@@ -19,7 +19,6 @@ export const actions: Actions = {
 			});
 		}
 
-
 		// const response = await fetch(
 		// 	'http://localhost:25052/auth/challenge' +
 		// 		new URLSearchParams({

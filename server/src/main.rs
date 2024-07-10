@@ -7,7 +7,8 @@ use axum::{
 };
 use migration::{Migrator, MigratorTrait};
 
-use routes::auth::register::main as register;
+use routes::auth::register::finalize::main as finalize;
+use routes::auth::register::request::main as request;
 use routes::get_emails::main as mails;
 use routes::get_users::main as users;
 use routes::receive::main as send;
@@ -23,7 +24,8 @@ async fn main() {
     let app = Router::new()
         .route("/", get(|| async { "Hello, World!" }))
         .route("/send", post(send))
-        .route("/auth/register", post(register))
+        .route("/auth/register/request", post(request))
+        .route("/auth/register/finalize", post(finalize))
         .route(
             "/test",
             get(|| async { db::create_test_user().await.unwrap() }),

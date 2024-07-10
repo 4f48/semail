@@ -22,7 +22,7 @@ pub struct Payload {
     verifier: String,
 }
 
-pub async fn main(Json(payload): Json<Value>) -> (StatusCode, Json<Value>) {
+pub async fn _main(Json(payload): Json<Value>) -> (StatusCode, Json<Value>) {
     let payload: Payload = match serde_json::from_value(payload) {
         Ok(payload) => payload,
         Err(error) => {

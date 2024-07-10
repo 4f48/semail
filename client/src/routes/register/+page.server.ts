@@ -4,6 +4,9 @@ import { superValidate } from 'sveltekit-superforms';
 import { register } from '@/forms';
 import { zod } from 'sveltekit-superforms/adapters';
 
+import { Registration } from '@47ng/opaque-client';
+import { request } from 'http';
+
 export const load: PageServerLoad = async () => {
 	return {
 		form: await superValidate(zod(register))
@@ -18,6 +21,19 @@ export const actions: Actions = {
 				form
 			});
 		}
+
+		const registration = new Registration();
+		const registrationRequest = registration.start(form.data.password);
+		
+		// store backend URL later in .env
+		const response = await fetch('http://localhost:25052/auth/register', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				uesrname: form.data.username,
+				request: registrationRequest
+			})
+		});
 
 		// const response = await fetch('http://localhost:25052/auth/register', {
 		// 	method: 'POST',

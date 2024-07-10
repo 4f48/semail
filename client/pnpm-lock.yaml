@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@47ng/opaque-client':
+        specifier: ^2.1.5
+        version: 2.1.5
       bits-ui:
         specifier: ^0.21.12
         version: 0.21.12(svelte@4.2.18)
@@ -104,6 +107,9 @@ importers:
         version: 1.6.0(@types/node@20.14.10)
 
 packages:
+
+  '@47ng/opaque-client@2.1.5':
+    resolution: {integrity: sha512-uYxNuRtBlPEfTrxHqmDARDIiqwEVWzIL5C3I1kmX7P1cMNtjV0/mmUW73TX+l0+n3GGEivx/aCOhek209Y+LJw==}
 
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
@@ -2040,6 +2046,8 @@ packages:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
 
 snapshots:
+
+  '@47ng/opaque-client@2.1.5': {}
 
   '@alloc/quick-lru@5.2.0': {}
 
