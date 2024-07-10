@@ -63,7 +63,8 @@ pub async fn create_test_user() -> Result<(), DbErr> {
         name: Set(String::from("test")),
         public_key: Set(String::from("abc123")),
         private_key: Set(String::from("SuperSecurePrivateKey")),
-        password: Set(String::from("SuperSecurePasswordHash")),
+        salt: Set(String::from("hash!")),
+        verifier: Set(String::from("SuperSecurePasswordHash")),
     };
 
     account.insert(&db).await?;

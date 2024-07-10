@@ -4,8 +4,6 @@ import { superValidate } from 'sveltekit-superforms';
 import { login } from '@/forms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-import { SRPClient } from '@windwalker-io/srp';
-
 export const load: PageServerLoad = async () => {
 	return {
 		form: await superValidate(zod(login))
@@ -21,19 +19,14 @@ export const actions: Actions = {
 			});
 		}
 
-		const client = SRPClient.create();
-		let a = client.generatePublic(client.getKey());
 
-		const response = await fetch(
-			'http://localhost:25052/auth/challenge' +
-				new URLSearchParams({
-					identity: form.data.username
-				})
-		);
-
-		console.debug(response);
-
-		
+		// const response = await fetch(
+		// 	'http://localhost:25052/auth/challenge' +
+		// 		new URLSearchParams({
+		// 			identity: form.data.username,
+		// 			public: (await client.generatePublic(client.getKey())).toString()
+		// 		})
+		// );
 
 		return {
 			form

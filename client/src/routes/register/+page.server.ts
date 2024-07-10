@@ -30,8 +30,6 @@ export const actions: Actions = {
 		// 	})
 		// });
 
-		register_user(form.data.username, form.data.password);
-
 		// console.debug(response);
 
 		return {
@@ -39,25 +37,3 @@ export const actions: Actions = {
 		};
 	}
 };
-
-import { SRPClient } from '@windwalker-io/srp';
-
-// experimental srp client implementation for registering user
-async function register_user(identity: string, password: string) {
-	const client = SRPClient.create().setHasher("sha512");
-	const { salt, verifier } = await client.register(identity, password);
-	console.debug(salt);
-	console.debug(verifier);
-
-	// const response = await fetch('http://localhost:25052/auth/register', {
-	// 	method: 'POST',
-	// 	headers: {
-	// 		'Content-Type': 'application/json'
-	// 	},
-	// 	body: JSON.stringify({
-	//		identity: identity,
-	// 		salt: salt.toString(16),
-	// 		verifier: verifier.toString(16)
-	// 	})
-	// });
-}
