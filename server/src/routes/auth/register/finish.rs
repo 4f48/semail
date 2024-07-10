@@ -91,7 +91,7 @@ pub async fn main(
 
     let account = ActiveModel {
         id: Set(Uuid::now_v7()),
-        name: Set(name.to_string()), // whyyyyyyyyyyyyyyy
+        name: Set(name.to_string()),
         verifier: Set(BASE64_STANDARD.encode(match bincode::serialize(&verifier) {
             Ok(verifier) => verifier,
             Err(error) => return (
