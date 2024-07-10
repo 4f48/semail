@@ -5,7 +5,6 @@ import { register } from '@/forms';
 import { zod } from 'sveltekit-superforms/adapters';
 
 import { Registration } from '@47ng/opaque-server';
-import * as bincode from "bincode-ts";
 
 export const load: PageServerLoad = async () => {
 	return {
@@ -24,6 +23,8 @@ export const actions: Actions = {
 
 		const registration = new Registration();
 		const registrationRequest = registration.start(form.data.password);
+
+		console.debug(registrationRequest);
 
 
 		// store backend URL later in .env
@@ -44,17 +45,13 @@ export const actions: Actions = {
 
 		let body = await start.json();
 
-		let decoder = new bincode.Decoder();
-
-		console.debug({
-			base64: body.response,
-			converted: ""
-		})
+		let responseBytes = Buffer.from(body.response, "base64");
 
 		const registrationRecord = registration.finish(
 			form.data.password,
-			Uint8Array.from(atob(body.response), (c) => c.charCodeAt(0))
+			responseBytes
 		);
+		console.debug(registrationRecord);
 
 		const finish = await fetch('http://localhost:25052/auth/register/finish', {
 			method: 'POST',
@@ -65,11 +62,16 @@ export const actions: Actions = {
 			})
 		});
 
+		registration.free();
+
 		if (!finish.ok) {
+			console.debug(await finish.json())
 			return fail(finish.status, {
 				form
 			});
 		}
+
+		console.debug(await finish.json());
 
 		return {
 			form

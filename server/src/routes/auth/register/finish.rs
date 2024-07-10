@@ -37,42 +37,46 @@ pub async fn main(
             )
         }
     };
-
-    return (
-        StatusCode::OK,
-        Json(json!({
-            "base64": payload.result
-        }))
-    );
     
     let decoded = BASE64_STANDARD.decode(payload.result).unwrap(); dbg!(&decoded);
-    let deserialized: ServerRegistration<Default> = bincode::deserialize(&decoded).unwrap(); dbg!(deserialized);
-    
-    todo!();
-
-    let verifier = ServerRegistration::<Default>::finish(
-        match bincode::deserialize(match &BASE64_STANDARD.decode(payload.result) {
-            Ok(result) => result,
-            Err(error) => {
-                return (
-                    StatusCode::BAD_REQUEST,
-                    Json(json!({
-                        "error": format!("1 {}", error)
-                    })),
-                )
-            }
-        }) {
-            Ok(upload) => upload,
-            Err(error) => {
-                return (
-                    StatusCode::BAD_REQUEST,
-                    Json(json!({
+    let deserialized = match bincode::deserialize(&decoded) {
+        Ok(upload) => upload,
+        Err(error) => {
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(json!({
                         "error": format!("2 {}", error)
                     })),
-                )
-            }
+            )
+        }
+    };
+    
+    /*let deserialized = match bincode::deserialize(match &BASE64_STANDARD.decode(payload.result) {
+        Ok(result) => { 
+            dbg!(result);
+            result
         },
-    );
+        Err(error) => {
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(json!({
+                        "error": format!("1 {}", error)
+                    })),
+            )
+        }
+    }) {
+        Ok(upload) => upload,
+        Err(error) => {
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(json!({
+                        "error": format!("2 {}", error)
+                    })),
+            )
+        }
+    };*/
+
+    let verifier = ServerRegistration::<Default>::finish(deserialized);
 
     let uuid = match Uuid::from_str(&payload.flow_id) {
         Ok(uuid) => uuid,

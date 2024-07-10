@@ -9,7 +9,7 @@ use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
 use base64::prelude::*;
-use opaque_ke::ServerRegistration;
+use opaque_ke::{RegistrationRequest, ServerRegistration, ServerRegistrationStartResult};
 use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use serde::Deserialize;
 use serde_json::{json, Value};
@@ -48,6 +48,9 @@ pub async fn main(
             )
         }
     };
+    
+    let decoded = BASE64_STANDARD.decode(payload.request).unwrap();
+    let deserialized: RegistrationRequest<Default> = bincode::deserialize(&decoded).unwrap();
 
     match Accounts::find()
         .filter(accounts::Column::Name.eq(&payload.username))
@@ -58,36 +61,14 @@ pub async fn main(
             None => {
                 match ServerRegistration::<Default>::start(
                     &state.server_setup,
-                    match bincode::deserialize(match &BASE64_STANDARD.decode(payload.request) {
-                        Ok(result) => result,
-                        Err(error) => {
-                            return (
-                                StatusCode::BAD_REQUEST,
-                                Json(json!({
-                                    "error": format!("{}", error)
-                                })),
-                            )
-                        }
-                    }) {
-                        Ok(upload) => upload,
-                        Err(error) => {
-                            return (
-                                StatusCode::BAD_REQUEST,
-                                Json(json!({
-                                    "error": format!("{}", error)
-                                })),
-                            )
-                        }
-                    },
+                    deserialized,
                     payload.username.as_bytes(),
                 ) {
                     Ok(server_start_result) => {
-                        
                         let response = BASE64_STANDARD.encode(
                             match bincode::serialize(&server_start_result.message) {
-                                Ok(response) => { 
-                                    dbg!(&response.len());
-                                    response 
+                                Ok(response) => {
+                                    response
                                 },
                                 Err(error) => {
                                     return (
@@ -99,8 +80,6 @@ pub async fn main(
                                 }
                             },
                         );
-                        
-                        dbg!(&response);
 
                         let flow_id = Uuid::now_v7();
                         state.flows.register.insert(flow_id, payload.username);
