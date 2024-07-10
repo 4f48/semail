@@ -1,7 +1,10 @@
+use crate::common::opaque::Default;
 use axum::http::StatusCode;
 use axum::Json;
+use opaque_ke::ServerSetup;
 use serde::Deserialize;
 use serde_json::{json, Value};
+use axum::extract::State;
 
 #[derive(Deserialize)]
 struct Payload {
