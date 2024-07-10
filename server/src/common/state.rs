@@ -6,7 +6,7 @@ use rand::RngCore;
 use std::sync::Arc;
 
 pub struct AppState {
-    server_setup: ServerSetup<Default, PrivateKey<Ristretto255>>
+    pub server_setup: ServerSetup<Default, PrivateKey<Ristretto255>>
 }
 
 pub fn main() -> Arc<AppState> {

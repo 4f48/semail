@@ -1,19 +1,21 @@
 use crate::common::opaque::Default;
+use crate::common::state::AppState;
+
+use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
-use opaque_ke::ServerSetup;
+use opaque_ke::{RegistrationRequest, ServerRegistration};
 use serde::Deserialize;
 use serde_json::{json, Value};
-use axum::extract::State;
 
 #[derive(Deserialize)]
 struct Payload {
-    _username: String,
-    _request: String,
+    username: String,
+    request: String,
 }
 
-pub async fn main(Json(payload): Json<Value>) -> (StatusCode, Json<Value>) {
-    let _payload: Payload = match serde_json::from_value(payload) {
+pub async fn main(Json(payload): Json<Value>, State(state): State<AppState>) -> (StatusCode, Json<Value>) {
+    let payload: Payload = match serde_json::from_value(payload) {
         Ok(payload) => payload,
         Err(error) => {
             return (
@@ -24,6 +26,12 @@ pub async fn main(Json(payload): Json<Value>) -> (StatusCode, Json<Value>) {
             )
         }
     };
+    
+    let start = ServerRegistration::<Default>::start(
+        &state.server_setup,
+        payload.request,
+        payload.username.as_bytes()
+    );
 
     todo!();
 }

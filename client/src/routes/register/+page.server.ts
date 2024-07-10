@@ -31,7 +31,7 @@ export const actions: Actions = {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
 				uesrname: form.data.username,
-				request: registrationRequest
+				request: Buffer.from(registrationRequest).toString("base64"),
 			})
 		});
 
