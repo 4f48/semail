@@ -4,8 +4,7 @@ import { superValidate } from 'sveltekit-superforms';
 import { register } from '@/forms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-import { Registration, ServerSetup } from '@47ng/opaque-server';
-import { b64 } from "@47ng/codec";
+import * as opaque from "@serenity-kit/opaque";
 
 export const load: PageServerLoad = async () => {
 	return {
@@ -22,11 +21,9 @@ export const actions: Actions = {
 			});
 		}
 
-		const registration = new Registration();
-		const registrationRequest = registration.start(form.data.password);
+		const { clientRegistrationState, registrationRequest } = opaque.client.startRegistration({ password: form.data.password });
 
 		console.debug(registrationRequest);
-
 
 		// store backend URL later in .env
 		const start = await fetch('http://localhost:25052/auth/register/start', {
@@ -34,11 +31,12 @@ export const actions: Actions = {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
 				username: form.data.username,
-				request: Buffer.from(registrationRequest).toString('base64')
+				request: Buffer.from(registrationRequest, "base64").toString("base64"),
 			})
 		});
 
 		if (!start.ok) {
+			console.error(await start.json());
 			return fail(start.status, {
 				form
 			});
@@ -46,13 +44,11 @@ export const actions: Actions = {
 
 		let body = await start.json();
 
-		let responseBytes = Buffer.from(body.response, "base64");
-
-		const registrationRecord = registration.finish(
-			form.data.password,
-			responseBytes
-		);
-		console.debug(registrationRecord);
+		const { registrationRecord } = opaque.client.finishRegistration({
+			clientRegistrationState,
+			registrationResponse: body.response,
+			password: form.data.password
+		})
 
 		const finish = await fetch('http://localhost:25052/auth/register/finish', {
 			method: 'POST',
@@ -62,8 +58,6 @@ export const actions: Actions = {
 				result: Buffer.from(registrationRecord).toString('base64')
 			})
 		});
-
-		registration.free();
 
 		if (!finish.ok) {
 			console.debug(await finish.json())

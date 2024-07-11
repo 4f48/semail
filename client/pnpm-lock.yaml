@@ -8,15 +8,9 @@ importers:
 
   .:
     dependencies:
-      '@47ng/codec':
-        specifier: ^1.1.0
-        version: 1.1.0
-      '@47ng/opaque-client':
-        specifier: ^2.1.5
-        version: 2.1.5
-      '@47ng/opaque-server':
-        specifier: ^2.1.5
-        version: 2.1.5
+      '@serenity-kit/opaque':
+        specifier: ^0.8.4
+        version: 0.8.4
       bincode-ts:
         specifier: ^0.1.1
         version: 0.1.1
@@ -119,16 +113,6 @@ importers:
         version: 1.6.0(@types/node@20.14.10)
 
 packages:
-
-  '@47ng/codec@1.1.0':
-    resolution: {integrity: sha512-gvtA2RjijvEiYQbURPM6/Z+ySfS4lmtQ9NovDzzT+5ekeZ3M5pGiotlT94Qd+At4AYwWp7mWJLvxFn3JR+BZbA==}
-    engines: {node: '>=11'}
-
-  '@47ng/opaque-client@2.1.5':
-    resolution: {integrity: sha512-uYxNuRtBlPEfTrxHqmDARDIiqwEVWzIL5C3I1kmX7P1cMNtjV0/mmUW73TX+l0+n3GGEivx/aCOhek209Y+LJw==}
-
-  '@47ng/opaque-server@2.1.5':
-    resolution: {integrity: sha512-5zWFt4bedJTaYwNT+F3kinZrAy1dpcK7wWg2co6fVHGnjR5Y9bAjKkramNwUwbMjKkaCLVJGbX5oqxZWiieWuQ==}
 
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
@@ -484,6 +468,10 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@serenity-kit/opaque@0.8.4':
+    resolution: {integrity: sha512-sFxGxZWdBciJ1Bp2F5Pey5q3kW+bN/RYpsZueLogb/KAWF50XuYk5bSG0Y8gH784jV+2XI/G8ptX+kWA0w6N3Q==}
+    hasBin: true
+
   '@sideway/address@4.1.5':
     resolution: {integrity: sha512-IqO/DUQHUkPeixNQ8n0JA6102hT9CmaljNTPmQ1u8MEhBo/R4Q8eKLN/vGZxuebwOroDB4cbpjheD4+/sKFK4Q==}
 
@@ -501,12 +489,6 @@ packages:
 
   '@sodaru/yup-to-json-schema@2.0.1':
     resolution: {integrity: sha512-lWb0Wiz8KZ9ip/dY1eUqt7fhTPmL24p6Hmv5Fd9pzlzAdw/YNcWZr+tiCT4oZ4Zyxzi9+1X4zv82o7jYvcFxYA==}
-
-  '@stablelib/base64@1.0.1':
-    resolution: {integrity: sha512-1bnPQqSxSuc3Ii6MhBysoWCg58j97aUjuCSZrGSmDxNqtytIi0k8utUenAwTZN4V5mXXYGsVUI9zeBqy+jBOSQ==}
-
-  '@stablelib/hex@1.0.1':
-    resolution: {integrity: sha512-PQOEChVBjhYGgAD+ehO2ow1gSj1slre3jW4oMD4kV8VrhYhzmtsQDWDZej3BQO8qkVezdczDvISxVSF24PuYNA==}
 
   '@sveltejs/adapter-auto@3.2.2':
     resolution: {integrity: sha512-Mso5xPCA8zgcKrv+QioVlqMZkyUQ5MjDJiEPuG/Z7cV/5tmwV7LmcVWk5tZ+H0NCOV1x12AsoSpt/CwFwuVXMA==}
@@ -2080,15 +2062,6 @@ packages:
 
 snapshots:
 
-  '@47ng/codec@1.1.0':
-    dependencies:
-      '@stablelib/base64': 1.0.1
-      '@stablelib/hex': 1.0.1
-
-  '@47ng/opaque-client@2.1.5': {}
-
-  '@47ng/opaque-server@2.1.5': {}
-
   '@alloc/quick-lru@5.2.0': {}
 
   '@ampproject/remapping@2.3.0':
@@ -2362,6 +2335,8 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.18.1':
     optional: true
 
+  '@serenity-kit/opaque@0.8.4': {}
+
   '@sideway/address@4.1.5':
     dependencies:
       '@hapi/hoek': 9.3.0
@@ -2380,10 +2355,6 @@ snapshots:
 
   '@sodaru/yup-to-json-schema@2.0.1':
     optional: true
-
-  '@stablelib/base64@1.0.1': {}
-
-  '@stablelib/hex@1.0.1': {}
 
   '@sveltejs/adapter-auto@3.2.2(@sveltejs/kit@2.5.18(@sveltejs/vite-plugin-svelte@3.1.1(svelte@4.2.18)(vite@5.3.3(@types/node@20.14.10)))(svelte@4.2.18)(vite@5.3.3(@types/node@20.14.10)))':
     dependencies:

@@ -49,7 +49,15 @@ pub async fn main(
         }
     };
 
-    let decoded = BASE64_STANDARD.decode(payload.request).unwrap();
+    let decoded = match BASE64_STANDARD.decode(payload.request) {
+      Ok(decoded) => decoded,
+        Err(error) => return (
+            StatusCode::BAD_REQUEST,
+            Json(json!({
+                "error": format!("{}", error)
+            }))
+        )
+    };
     let deserialized: RegistrationRequest<Default> = bincode::deserialize(&decoded).unwrap();
 
     match Accounts::find()

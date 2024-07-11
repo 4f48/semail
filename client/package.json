@@ -43,9 +43,7 @@
 	"type": "module",
 	"packageManager": "pnpm@9.4.0+sha256.b6fd0bfda555e7e584ad7e56b30c68b01d5a04f9ee93989f4b93ca8473c49c74",
 	"dependencies": {
-		"@47ng/codec": "^1.1.0",
-		"@47ng/opaque-client": "^2.1.5",
-		"@47ng/opaque-server": "^2.1.5",
+		"@serenity-kit/opaque": "^0.8.4",
 		"bincode-ts": "^0.1.1",
 		"bits-ui": "^0.21.12",
 		"clsx": "^2.1.1",

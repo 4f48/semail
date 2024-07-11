@@ -7,7 +7,7 @@ use entity::accounts::ActiveModel;
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
-use base64::prelude::BASE64_STANDARD;
+use base64::prelude::*;
 use base64::Engine;
 use opaque_ke::ServerRegistration;
 use sea_orm::{ActiveModelTrait, Set};

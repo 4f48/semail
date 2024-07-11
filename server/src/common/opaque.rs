@@ -1,6 +1,6 @@
 use argon2::password_hash::rand_core::OsRng;
 use argon2::Argon2;
-use base64::prelude::BASE64_STANDARD;
+use base64::prelude::*;
 use base64::Engine;
 use opaque_ke::{CipherSuite, Ristretto255, ServerSetup};
 use serde::Serialize;
