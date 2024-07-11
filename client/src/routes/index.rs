@@ -5,8 +5,12 @@ use crate::Route;
 #[component]
 pub fn Index() -> Element {
     rsx! {
+        h1 {
+            class: "text-2xl font-bold",
+            "SE-Mail web panel"
+        }
         div {
-            class: "h-[100%] w-[100%] flex items-center justify-center gap-3",
+            class: "flex flex-col gap-2 w-96",
             Lin {
                 href: "/login",
                 children: rsx! {
