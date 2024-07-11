@@ -4,7 +4,8 @@ import { superValidate } from 'sveltekit-superforms';
 import { register } from '@/forms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-import { Registration } from '@47ng/opaque-server';
+import { Registration, ServerSetup } from '@47ng/opaque-server';
+import { b64 } from "@47ng/codec";
 
 export const load: PageServerLoad = async () => {
 	return {

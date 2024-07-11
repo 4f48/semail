@@ -37,22 +37,23 @@ pub async fn main(
             )
         }
     };
-    
-    let decoded = BASE64_STANDARD.decode(payload.result).unwrap(); dbg!(&decoded);
+
+    let decoded = BASE64_STANDARD.decode(payload.result).unwrap();
+    dbg!(&decoded);
     let deserialized = match bincode::deserialize(&decoded) {
         Ok(upload) => upload,
         Err(error) => {
             return (
                 StatusCode::BAD_REQUEST,
                 Json(json!({
-                        "error": format!("2 {}", error)
-                    })),
+                    "error": format!("2 {}", error)
+                })),
             )
         }
     };
-    
+
     /*let deserialized = match bincode::deserialize(match &BASE64_STANDARD.decode(payload.result) {
-        Ok(result) => { 
+        Ok(result) => {
             dbg!(result);
             result
         },

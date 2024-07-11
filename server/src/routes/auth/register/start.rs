@@ -48,7 +48,7 @@ pub async fn main(
             )
         }
     };
-    
+
     let decoded = BASE64_STANDARD.decode(payload.request).unwrap();
     let deserialized: RegistrationRequest<Default> = bincode::deserialize(&decoded).unwrap();
 
@@ -67,9 +67,7 @@ pub async fn main(
                     Ok(server_start_result) => {
                         let response = BASE64_STANDARD.encode(
                             match bincode::serialize(&server_start_result.message) {
-                                Ok(response) => {
-                                    response
-                                },
+                                Ok(response) => response,
                                 Err(error) => {
                                     return (
                                         StatusCode::INTERNAL_SERVER_ERROR,

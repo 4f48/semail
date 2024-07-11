@@ -11,14 +11,19 @@ use routes::receive::main as send;
 
 use migration::{Migrator, MigratorTrait};
 
+use crate::common::opaque::server_setup;
 use argon2::password_hash::rand_core::OsRng;
 use axum::{
     routing::{get, post},
     Router,
 };
+use base64::prelude::BASE64_STANDARD;
+use base64::Engine;
 use dashmap::DashMap;
 use opaque_ke::keypair::PrivateKey;
 use opaque_ke::{Ristretto255, ServerSetup};
+use std::fs::File;
+use std::io::prelude::*;
 use uuid::Uuid;
 
 #[derive(Clone)]
@@ -37,8 +42,7 @@ pub struct Flows {
 async fn main() {
     db::create_db().await;
 
-    let mut rng = OsRng;
-    let server_setup = ServerSetup::<Default>::new(&mut rng);
+    let server_setup = server_setup().await;
 
     let state = AppState {
         server_setup,

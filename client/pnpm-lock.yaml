@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@47ng/codec':
+        specifier: ^1.1.0
+        version: 1.1.0
       '@47ng/opaque-client':
         specifier: ^2.1.5
         version: 2.1.5
@@ -116,6 +119,10 @@ importers:
         version: 1.6.0(@types/node@20.14.10)
 
 packages:
+
+  '@47ng/codec@1.1.0':
+    resolution: {integrity: sha512-gvtA2RjijvEiYQbURPM6/Z+ySfS4lmtQ9NovDzzT+5ekeZ3M5pGiotlT94Qd+At4AYwWp7mWJLvxFn3JR+BZbA==}
+    engines: {node: '>=11'}
 
   '@47ng/opaque-client@2.1.5':
     resolution: {integrity: sha512-uYxNuRtBlPEfTrxHqmDARDIiqwEVWzIL5C3I1kmX7P1cMNtjV0/mmUW73TX+l0+n3GGEivx/aCOhek209Y+LJw==}
@@ -494,6 +501,12 @@ packages:
 
   '@sodaru/yup-to-json-schema@2.0.1':
     resolution: {integrity: sha512-lWb0Wiz8KZ9ip/dY1eUqt7fhTPmL24p6Hmv5Fd9pzlzAdw/YNcWZr+tiCT4oZ4Zyxzi9+1X4zv82o7jYvcFxYA==}
+
+  '@stablelib/base64@1.0.1':
+    resolution: {integrity: sha512-1bnPQqSxSuc3Ii6MhBysoWCg58j97aUjuCSZrGSmDxNqtytIi0k8utUenAwTZN4V5mXXYGsVUI9zeBqy+jBOSQ==}
+
+  '@stablelib/hex@1.0.1':
+    resolution: {integrity: sha512-PQOEChVBjhYGgAD+ehO2ow1gSj1slre3jW4oMD4kV8VrhYhzmtsQDWDZej3BQO8qkVezdczDvISxVSF24PuYNA==}
 
   '@sveltejs/adapter-auto@3.2.2':
     resolution: {integrity: sha512-Mso5xPCA8zgcKrv+QioVlqMZkyUQ5MjDJiEPuG/Z7cV/5tmwV7LmcVWk5tZ+H0NCOV1x12AsoSpt/CwFwuVXMA==}
@@ -2067,6 +2080,11 @@ packages:
 
 snapshots:
 
+  '@47ng/codec@1.1.0':
+    dependencies:
+      '@stablelib/base64': 1.0.1
+      '@stablelib/hex': 1.0.1
+
   '@47ng/opaque-client@2.1.5': {}
 
   '@47ng/opaque-server@2.1.5': {}
@@ -2362,6 +2380,10 @@ snapshots:
 
   '@sodaru/yup-to-json-schema@2.0.1':
     optional: true
+
+  '@stablelib/base64@1.0.1': {}
+
+  '@stablelib/hex@1.0.1': {}
 
   '@sveltejs/adapter-auto@3.2.2(@sveltejs/kit@2.5.18(@sveltejs/vite-plugin-svelte@3.1.1(svelte@4.2.18)(vite@5.3.3(@types/node@20.14.10)))(svelte@4.2.18)(vite@5.3.3(@types/node@20.14.10)))':
     dependencies:

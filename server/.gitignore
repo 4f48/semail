@@ -2,3 +2,4 @@
 send.http
 get.http
 sqlite.db
+server_setup.txt
