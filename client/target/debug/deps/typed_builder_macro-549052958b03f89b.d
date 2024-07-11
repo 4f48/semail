@@ -1,0 +1,10 @@
+/home/x4f48/Desktop/semail/client/target/debug/deps/libtyped_builder_macro-549052958b03f89b.so: /home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typed-builder-macro-0.18.2/src/lib.rs /home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typed-builder-macro-0.18.2/src/builder_attr.rs /home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typed-builder-macro-0.18.2/src/field_info.rs /home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typed-builder-macro-0.18.2/src/mutator.rs /home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typed-builder-macro-0.18.2/src/struct_info.rs /home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typed-builder-macro-0.18.2/src/util.rs
+
+/home/x4f48/Desktop/semail/client/target/debug/deps/typed_builder_macro-549052958b03f89b.d: /home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typed-builder-macro-0.18.2/src/lib.rs /home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typed-builder-macro-0.18.2/src/builder_attr.rs /home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typed-builder-macro-0.18.2/src/field_info.rs /home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typed-builder-macro-0.18.2/src/mutator.rs /home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typed-builder-macro-0.18.2/src/struct_info.rs /home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typed-builder-macro-0.18.2/src/util.rs
+
+/home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typed-builder-macro-0.18.2/src/lib.rs:
+/home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typed-builder-macro-0.18.2/src/builder_attr.rs:
+/home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typed-builder-macro-0.18.2/src/field_info.rs:
+/home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typed-builder-macro-0.18.2/src/mutator.rs:
+/home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typed-builder-macro-0.18.2/src/struct_info.rs:
+/home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typed-builder-macro-0.18.2/src/util.rs:
