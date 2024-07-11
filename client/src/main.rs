@@ -1,6 +1,8 @@
 #![allow(non_snake_case)]
 
 mod routes;
+mod components;
+
 use routes::index::Index;
 use routes::login::Login;
 use routes::register::Register;
@@ -35,10 +37,3 @@ fn App() -> Element {
     }
 }
 
-#[component]
-fn Blog(id: i32) -> Element {
-    rsx! {
-        Link { to: Route::Index {}, "Go to counter" }
-        "Blog post {id}"
-    }
-}
