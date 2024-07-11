@@ -1,7 +1,0 @@
-/home/x4f48/Desktop/semail/client/target/wasm32-unknown-unknown/debug/deps/libpin_project_lite-3cfc06a7dd055180.rmeta: /home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/pin-project-lite-0.2.14/src/lib.rs
-
-/home/x4f48/Desktop/semail/client/target/wasm32-unknown-unknown/debug/deps/libpin_project_lite-3cfc06a7dd055180.rlib: /home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/pin-project-lite-0.2.14/src/lib.rs
-
-/home/x4f48/Desktop/semail/client/target/wasm32-unknown-unknown/debug/deps/pin_project_lite-3cfc06a7dd055180.d: /home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/pin-project-lite-0.2.14/src/lib.rs
-
-/home/x4f48/.cargo/registry/src/index.crates.io-6f17d22bba15001f/pin-project-lite-0.2.14/src/lib.rs:
