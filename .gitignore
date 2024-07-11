@@ -1,2 +1,5 @@
 **/dist
 **/target
+**/*.rs.bk
+client/static
+client/.dioxus
