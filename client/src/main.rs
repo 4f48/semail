@@ -1,12 +1,21 @@
 #![allow(non_snake_case)]
 
+mod routes;
+use routes::index::Index;
+use routes::login::Login;
+use routes::register::Register;
+
 use dioxus::prelude::*;
 use tracing::Level;
 
 #[derive(Clone, Routable, Debug, PartialEq)]
 enum Route {
     #[route("/")]
-    Home {},
+    Index {},
+    #[route("/login")]
+    Login {},
+    #[route("/register")]
+    Register {},
     #[route("/blog/:id")]
     Blog { id: i32 },
 }
@@ -14,6 +23,9 @@ enum Route {
 fn main() {
     // Init logger
     dioxus_logger::init(Level::INFO).expect("failed to init logger");
+    const _TAILWIND_URL: &str = manganis::mg!(file("public/tailwind.css"));
+    const _CSS_URL: &str = manganis::mg!(file("assets/main.css"));
+    
     launch(App);
 }
 
@@ -26,26 +38,7 @@ fn App() -> Element {
 #[component]
 fn Blog(id: i32) -> Element {
     rsx! {
-        Link { to: Route::Home {}, "Go to counter" }
+        Link { to: Route::Index {}, "Go to counter" }
         "Blog post {id}"
-    }
-}
-
-#[component]
-fn Home() -> Element {
-    let mut count = use_signal(|| 0);
-
-    rsx! {
-        Link {
-            to: Route::Blog {
-                id: count()
-            },
-            "Go to blog"
-        }
-        div {
-            h1 { "High-Five counter: {count}" }
-            button { onclick: move |_| count += 1, "Up high!" }
-            button { onclick: move |_| count -= 1, "Down low!" }
-        }
     }
 }
