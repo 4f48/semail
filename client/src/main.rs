@@ -1,5 +1,5 @@
-use leptos::*;
 use client::App;
+use leptos::*;
 
 fn main() {
     // set up logging
