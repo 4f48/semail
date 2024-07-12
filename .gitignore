@@ -3,3 +3,4 @@
 **/*.rs.bk
 client/static
 client/.dioxus
+client/public/tailwind.css
