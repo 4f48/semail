@@ -1,5 +1,6 @@
 use crate::common::opaque::Default;
 use crate::AppState;
+
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
@@ -55,6 +56,7 @@ pub async fn main(
             )
         }
     };
+    state.flows.login.remove(&uuid);
     let decoded = match BASE64_STANDARD.decode(flow.value()) {
         Ok(decoded) => decoded,
         Err(error) => {
