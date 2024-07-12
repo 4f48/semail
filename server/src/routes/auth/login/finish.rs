@@ -90,7 +90,7 @@ pub async fn main(
         }
     };
     let result: CredentialFinalization<Default> = match bincode::deserialize(&decoded) {
-        Ok(request) => request,
+        Ok(result) => result,
         Err(error) => {
             return (
                 StatusCode::INTERNAL_SERVER_ERROR,
@@ -101,20 +101,18 @@ pub async fn main(
         }
     };
 
-    let _finish_result = match start_state.finish(result) {
-        Ok(finish_result) => finish_result,
-        Err(error) => {
-            return (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(json!({
-                    "error": format!("{}", error)
-                })),
-            )
-        }
-    };
-
-    // server part basically done here!
-    // I just need to check if session keys match
-    // but to do that, I should probably make the client implementation first
-    todo!();
+    match start_state.finish(result) {
+        Ok(_finish_result) => (
+            StatusCode::OK,
+            Json(json!({
+                "success": "you logged in"
+            })),
+        ),
+        Err(error) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({
+                "error": format!("{}", error)
+            })),
+        ),
+    }
 }
