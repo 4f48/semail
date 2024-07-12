@@ -3,8 +3,9 @@ mod routes;
 
 use common::db;
 use common::opaque::Default;
-use routes::auth::register::finish::main as finish;
-use routes::auth::register::start::main as start;
+use routes::auth::login::start::main as login_start;
+use routes::auth::register::finish::main as register_finish;
+use routes::auth::register::start::main as register_start;
 use routes::get_emails::main as mails;
 use routes::get_users::main as users;
 use routes::receive::main as send;
@@ -12,18 +13,13 @@ use routes::receive::main as send;
 use migration::{Migrator, MigratorTrait};
 
 use crate::common::opaque::server_setup;
-use argon2::password_hash::rand_core::OsRng;
 use axum::{
     routing::{get, post},
     Router,
 };
-use base64::prelude::BASE64_STANDARD;
-use base64::Engine;
 use dashmap::DashMap;
 use opaque_ke::keypair::PrivateKey;
 use opaque_ke::{Ristretto255, ServerSetup};
-use std::fs::File;
-use std::io::prelude::*;
 use uuid::Uuid;
 
 #[derive(Clone)]
@@ -58,8 +54,9 @@ async fn main() {
 
     let app = Router::new()
         .route("/send", post(send))
-        .route("/auth/register/start", post(start))
-        .route("/auth/register/finish", post(finish))
+        .route("/auth/register/start", post(register_start))
+        .route("/auth/register/finish", post(register_finish))
+        .route("/auth/login/start", post(login_start))
         // --- TESTING ROUTES, TO BE REMOVED ---
         .route(
             "/test",

@@ -9,7 +9,7 @@ use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
 use base64::prelude::*;
-use opaque_ke::{RegistrationRequest, ServerRegistration, ServerRegistrationStartResult};
+use opaque_ke::{RegistrationRequest, ServerRegistration};
 use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use serde::Deserialize;
 use serde_json::{json, Value};
@@ -50,13 +50,15 @@ pub async fn main(
     };
 
     let decoded = match BASE64_STANDARD.decode(payload.request) {
-      Ok(decoded) => decoded,
-        Err(error) => return (
-            StatusCode::BAD_REQUEST,
-            Json(json!({
-                "error": format!("{}", error)
-            }))
-        )
+        Ok(decoded) => decoded,
+        Err(error) => {
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(json!({
+                    "error": format!("{}", error)
+                })),
+            )
+        }
     };
     let deserialized: RegistrationRequest<Default> = bincode::deserialize(&decoded).unwrap();
 
