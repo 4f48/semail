@@ -15,6 +15,7 @@ use rand::rngs::OsRng;
 use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use serde::Deserialize;
 use serde_json::{json, Value};
+use uuid::Uuid;
 
 #[derive(Deserialize)]
 struct Payload {
@@ -144,6 +145,22 @@ pub async fn main(
         }
     };
 
+    let serialized = match bincode::serialize(&start_result.state) {
+        Ok(serialized) => serialized,
+        Err(error) => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({
+                    "error": format!("{}", error)
+                })),
+            )
+        }
+    };
+    let encoded = BASE64_STANDARD.encode(serialized);
+
+    let flow_id = Uuid::now_v7();
+    state.flows.login.insert(flow_id, String::from(&encoded));
+
     let serialized = match bincode::serialize(&start_result.message) {
         Ok(serialized) => serialized,
         Err(error) => {
@@ -155,11 +172,13 @@ pub async fn main(
             )
         }
     };
+    let encoded = BASE64_STANDARD.encode(serialized);
 
     (
         StatusCode::OK,
         Json(json!({
-            "response": BASE64_STANDARD.encode(serialized)
+            "flow_id": flow_id,
+            "response": encoded
         })),
     )
 }

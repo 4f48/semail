@@ -3,6 +3,7 @@ mod routes;
 
 use common::db;
 use common::opaque::Default;
+use routes::auth::login::finish::main as login_finish;
 use routes::auth::login::start::main as login_start;
 use routes::auth::register::finish::main as register_finish;
 use routes::auth::register::start::main as register_start;
@@ -31,7 +32,7 @@ pub struct AppState {
 #[derive(Clone)]
 pub struct Flows {
     register: DashMap<Uuid, String>,
-    _login: DashMap<Uuid, String>, // prepare for login
+    login: DashMap<Uuid, String>,
 }
 
 #[tokio::main]
@@ -44,7 +45,7 @@ async fn main() {
         server_setup,
         flows: Flows {
             register: DashMap::new(),
-            _login: DashMap::new(),
+            login: DashMap::new(),
         },
     };
 
@@ -57,6 +58,7 @@ async fn main() {
         .route("/auth/register/start", post(register_start))
         .route("/auth/register/finish", post(register_finish))
         .route("/auth/login/start", post(login_start))
+        .route("/auth/login/finish", post(login_finish))
         // --- TESTING ROUTES, TO BE REMOVED ---
         .route(
             "/test",
