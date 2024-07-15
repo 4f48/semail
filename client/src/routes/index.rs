@@ -1,6 +1,5 @@
-use dioxus::prelude::*;
 use crate::components::link::Lin;
-use crate::Route;
+use dioxus::prelude::*;
 
 #[component]
 pub fn Index() -> Element {

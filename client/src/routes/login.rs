@@ -1,12 +1,12 @@
+use crate::Route;
 use dioxus::core_macro::{component, rsx};
 use dioxus::prelude::*;
-use crate::Route;
 
 #[component]
 pub fn Login() -> Element {
     let mut username = use_signal(|| "".to_string());
     let mut password = use_signal(|| "".to_string());
-    
+
     rsx! {
         h1 {
             class: "text-2xl font-bold",

@@ -3,7 +3,7 @@ use dioxus::prelude::*;
 #[derive(PartialEq, Clone, Props)]
 pub struct Props {
     href: String,
-    children: Element
+    children: Element,
 }
 
 #[component]
@@ -15,4 +15,4 @@ pub fn Lin(props: Props) -> Element {
             {props.children}
         }
     }
-} 
+}
