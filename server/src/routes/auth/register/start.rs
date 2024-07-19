@@ -23,7 +23,7 @@ use crate::AppState;
 use entity::accounts;
 use entity::prelude::Accounts;
 
-use crate::common::api::parse_json;
+use crate::common::api::{b64_decode, deserialize, error_response, parse_json};
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
@@ -50,29 +50,19 @@ pub async fn main(
     };
 
     let db = match db::connect_db().await {
-        Ok(database_connection) => database_connection,
-        Err(error) => {
-            return (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(json!({
-                    "error": format!("{}", error)
-                })),
-            )
-        }
+        Ok(connection) => connection,
+        Err(error) => return error_response(StatusCode::INTERNAL_SERVER_ERROR, error),
     };
 
-    let decoded = match BASE64_STANDARD.decode(payload.request) {
-        Ok(decoded) => decoded,
-        Err(error) => {
-            return (
-                StatusCode::BAD_REQUEST,
-                Json(json!({
-                    "error": format!("{}", error)
-                })),
-            )
-        }
+    let decoded = match b64_decode(payload.request) {
+        Ok(bytes) => bytes,
+        Err(error) => return error,
     };
-    let deserialized: RegistrationRequest<Default> = bincode::deserialize(&decoded).unwrap();
+
+    let deserialized: RegistrationRequest<Default> = match deserialize(&decoded) {
+        Ok(request) => request,
+        Err(error) => return error,
+    };
 
     match Accounts::find()
         .filter(accounts::Column::Name.eq(&payload.username))

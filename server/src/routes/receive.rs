@@ -26,7 +26,7 @@ use entity::prelude::Accounts;
 use regex::Regex;
 use sea_orm::ActiveValue::Set;
 use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter};
-use serde::{Deserialize};
+use serde::Deserialize;
 use serde_json::json;
 use serde_json::Value;
 use std::env;

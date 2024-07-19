@@ -15,22 +15,51 @@
  *
  * SPDX-License-Identifier: GPL-3.0-only
  */
+
 use axum::http::StatusCode;
 use axum::Json;
+use base64::prelude::BASE64_STANDARD;
+use base64::Engine;
 use serde::de::DeserializeOwned;
 use serde_json::{json, Value};
 
-pub fn parse_json<T>(payload: Value) -> Result<T, (StatusCode, Json<Value>)>
+pub type ErrorResponse = (StatusCode, Json<Value>);
+
+pub fn parse_json<S>(payload: Value) -> Result<S, ErrorResponse>
 where
-    T: DeserializeOwned,
+    S: DeserializeOwned,
 {
     match serde_json::from_value(payload) {
         Ok(payload) => Ok(payload),
-        Err(error) => Err((
-            StatusCode::BAD_REQUEST,
-            Json(json!({
-                "error": format!("{}", error)
-            })),
-        )),
+        Err(error) => Err(error_response(StatusCode::BAD_REQUEST, error)),
     }
+}
+
+pub fn b64_decode(base64: String) -> Result<Vec<u8>, ErrorResponse> {
+    match BASE64_STANDARD.decode(base64) {
+        Ok(bytes) => Ok(bytes),
+        Err(error) => Err(error_response(StatusCode::INTERNAL_SERVER_ERROR, error)),
+    }
+}
+
+pub fn deserialize<'a, S>(bytes: &'a [u8]) -> Result<S, ErrorResponse>
+where
+    S: serde::de::Deserialize<'a>,
+{
+    match bincode::deserialize::<S>(bytes) {
+        Ok(deserialized) => Ok(deserialized),
+        Err(error) => Err(error_response(StatusCode::INTERNAL_SERVER_ERROR, error)),
+    }
+}
+
+pub fn error_response<E>(status: StatusCode, error: E) -> ErrorResponse
+where
+    E: std::error::Error + std::fmt::Debug,
+{
+    (
+        status,
+        Json(json!({
+            "error": format!("{}", error)
+        })),
+    )
 }
