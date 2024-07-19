@@ -1,6 +1,7 @@
 use crate::components::input::Input;
 use crate::components::submit::Submit;
 use crate::Route;
+
 use dioxus::core_macro::{component, rsx};
 use dioxus::prelude::*;
 use dioxus_logger::tracing::info;
@@ -21,7 +22,7 @@ pub fn Register() -> Element {
             class: "flex flex-col gap-2 w-96",
             form {
                 class: "flex flex-col gap-2 w-full",
-                onsubmit: move | event | handle_submit(event),
+                onsubmit: handle_submit,
                 Input {
                     name: "Username",
                     input_type: "text"
