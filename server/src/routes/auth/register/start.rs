@@ -9,7 +9,7 @@
  * SE-Mail is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *  See the GNU General Public License for more details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with SE-Mail.
  * If not, see <https://www.gnu.org/licenses/>.
  *
@@ -23,6 +23,7 @@ use crate::AppState;
 use entity::accounts;
 use entity::prelude::Accounts;
 
+use crate::common::api::parse_json;
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
@@ -43,16 +44,9 @@ pub async fn main(
     State(state): State<AppState>,
     Json(payload): Json<Value>,
 ) -> (StatusCode, Json<Value>) {
-    let payload: Payload = match serde_json::from_value(payload) {
+    let payload = match parse_json::<Payload>(payload) {
         Ok(payload) => payload,
-        Err(error) => {
-            return (
-                StatusCode::BAD_REQUEST,
-                Json(json!({
-                    "error": format!("{}", error)
-                })),
-            )
-        }
+        Err(error) => return error,
     };
 
     let db = match db::connect_db().await {

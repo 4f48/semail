@@ -9,7 +9,7 @@
  * SE-Mail is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *  See the GNU General Public License for more details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with SE-Mail.
  * If not, see <https://www.gnu.org/licenses/>.
  *
@@ -26,7 +26,7 @@ use entity::prelude::Accounts;
 use regex::Regex;
 use sea_orm::ActiveValue::Set;
 use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter};
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize};
 use serde_json::json;
 use serde_json::Value;
 use std::env;
