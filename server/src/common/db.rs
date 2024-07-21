@@ -17,8 +17,8 @@
  */
 
 use entity::accounts::ActiveModel;
-use entity::mails;
 use entity::prelude::{Accounts, Mails};
+use entity::{accounts, mails};
 use migration::{Migrator, MigratorTrait};
 use sea_orm::ActiveValue::Set;
 use sea_orm::{
@@ -64,6 +64,20 @@ pub async fn connect_db() -> Result<DatabaseConnection, DbErr> {
         .sqlx_logging(true)
         .sqlx_logging_level(log::LevelFilter::Info);
     Database::connect(opt).await
+}
+
+pub async fn check_if_exists(username: &String) -> Result<bool, DbErr> {
+    match Accounts::find()
+        .filter(accounts::Column::Name.eq(username))
+        .all(&connect_db().await?)
+        .await
+    {
+        Ok(results) => match results.first() {
+            Some(_) => Ok(true),
+            None => Ok(false),
+        },
+        Err(error) => Err(error),
+    }
 }
 
 // TEMPORARY: test database connection

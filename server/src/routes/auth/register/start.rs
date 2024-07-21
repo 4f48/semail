@@ -23,7 +23,8 @@ use crate::AppState;
 use entity::accounts;
 use entity::prelude::Accounts;
 
-use crate::common::api::{b64_decode, deserialize, error_response, parse_json};
+use crate::common::api::{b64_decode, deserialize, error_response, parse_json, return_error};
+use crate::common::db::check_if_exists;
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
@@ -44,26 +45,42 @@ pub async fn main(
     State(state): State<AppState>,
     Json(payload): Json<Value>,
 ) -> (StatusCode, Json<Value>) {
-    let payload = match parse_json::<Payload>(payload) {
+    let payload = match parse_json::<Payload>(payload).await {
         Ok(payload) => payload,
         Err(error) => return error,
     };
 
-    let db = match db::connect_db().await {
-        Ok(connection) => connection,
-        Err(error) => return error_response(StatusCode::INTERNAL_SERVER_ERROR, error),
+    match check_if_exists(&payload.username).await {
+        Ok(true) => {
+            return error_response(
+                StatusCode::BAD_REQUEST,
+                String::from("user with this name already exists"),
+            )
+        }
+        Ok(false) => (),
+        Err(error) => return return_error(StatusCode::INTERNAL_SERVER_ERROR, error),
     };
 
-    let decoded = match b64_decode(payload.request) {
+    let bytes = match b64_decode(&payload.request).await {
         Ok(bytes) => bytes,
         Err(error) => return error,
     };
-
-    let deserialized: RegistrationRequest<Default> = match deserialize(&decoded) {
-        Ok(request) => request,
+    let message = match deserialize(&bytes).await {
+        Ok(message) => message,
         Err(error) => return error,
     };
 
+    match ServerRegistration::<Default>::start(
+        &state.server_setup,
+        message,
+        payload.username.as_bytes(),
+    ) {
+        Ok(_) => (),
+        Err(error) => return return_error(StatusCode::INTERNAL_SERVER_ERROR, error),
+    }
+
+    todo!()
+    /*
     match Accounts::find()
         .filter(accounts::Column::Name.eq(&payload.username))
         .all(&db)
@@ -124,4 +141,5 @@ pub async fn main(
             })),
         ),
     }
+     */
 }

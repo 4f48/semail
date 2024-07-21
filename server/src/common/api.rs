@@ -25,41 +25,84 @@ use serde_json::{json, Value};
 
 pub type ErrorResponse = (StatusCode, Json<Value>);
 
-pub fn parse_json<S>(payload: Value) -> Result<S, ErrorResponse>
+pub async fn parse_json<S>(payload: Value) -> Result<S, ErrorResponse>
 where
     S: DeserializeOwned,
 {
     match serde_json::from_value(payload) {
         Ok(payload) => Ok(payload),
-        Err(error) => Err(error_response(StatusCode::BAD_REQUEST, error)),
+        Err(error) => Err(return_error(StatusCode::BAD_REQUEST, error)),
     }
 }
 
-pub fn b64_decode(base64: String) -> Result<Vec<u8>, ErrorResponse> {
+pub async fn b64_encode(bytes: Vec<u8>) -> String {
+    BASE64_STANDARD.encode(bytes)
+}
+
+pub async fn b64_decode(base64: &String) -> Result<Vec<u8>, ErrorResponse> {
     match BASE64_STANDARD.decode(base64) {
         Ok(bytes) => Ok(bytes),
-        Err(error) => Err(error_response(StatusCode::INTERNAL_SERVER_ERROR, error)),
+        Err(error) => Err(return_error(StatusCode::INTERNAL_SERVER_ERROR, error)),
     }
 }
 
-pub fn deserialize<'a, S>(bytes: &'a [u8]) -> Result<S, ErrorResponse>
+pub async fn serialize<T: ?Sized>(value: &T) -> Result<Vec<u8>, ErrorResponse>
+where
+    T: serde::Serialize,
+{
+    match bincode::serialize(value) {
+        Ok(serialized) => Ok(serialized),
+        Err(error) => Err(return_error(StatusCode::INTERNAL_SERVER_ERROR, error)),
+    }
+}
+
+pub async fn deserialize<'a, S>(bytes: <'a>&[u8]) -> Result<S, ErrorResponse>
 where
     S: serde::de::Deserialize<'a>,
 {
     match bincode::deserialize::<S>(bytes) {
         Ok(deserialized) => Ok(deserialized),
-        Err(error) => Err(error_response(StatusCode::INTERNAL_SERVER_ERROR, error)),
+        Err(error) => Err(return_error(StatusCode::INTERNAL_SERVER_ERROR, error)),
     }
 }
 
-pub fn error_response<E>(status: StatusCode, error: E) -> ErrorResponse
+pub async fn encode<T: ?Sized>(value: &T) -> Result<String, ErrorResponse>
 where
-    E: std::error::Error + std::fmt::Debug,
+    T: serde::Serialize,
 {
+    match serialize(value).await {
+        Ok(serialized) => Ok(b64_encode(serialized).await),
+        Err(error) => Err(error),
+    }
+}
+
+pub async fn decode<'a, S>(base64: &String) -> Result<S, ErrorResponse>
+where
+    S: serde::de::Deserialize<'a>,
+{
+    match deserialize::<S>(match b64_decode(base64).await {
+        Ok(bytes) => (&bytes).to_owned(),
+        Err(error) => return Err(error),
+    })
+    .await
+    {
+        Ok(message) => Ok(message),
+        Err(error) => Err(error),
+    }
+}
+
+pub fn return_error<E>(status: StatusCode, error: E) -> ErrorResponse
+where
+    E: std::fmt::Display,
+{
+    error_response(status, format!("{}", error))
+}
+
+pub fn error_response(status: StatusCode, error: String) -> ErrorResponse {
     (
         status,
         Json(json!({
-            "error": format!("{}", error)
+            "error": error
         })),
     )
 }
