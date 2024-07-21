@@ -16,13 +16,12 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 
-use crate::common::db::check_if_exists;
-use crate::common::opaque::Default;
-use crate::AppState;
-
 use crate::common::api::{
     b64_decode, deserialize, encode, error_response, parse_json, return_error,
 };
+use crate::common::db::check_if_exists;
+use crate::common::opaque::Default;
+use crate::common::state::AppState;
 
 use axum::extract::State;
 use axum::http::StatusCode;

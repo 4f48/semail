@@ -17,7 +17,7 @@
  */
 
 use crate::common::opaque::Default;
-use crate::AppState;
+use crate::common::state::AppState;
 
 use axum::extract::State;
 use axum::http::StatusCode;

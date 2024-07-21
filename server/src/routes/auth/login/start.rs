@@ -18,7 +18,7 @@
 
 use crate::common::db;
 use crate::common::opaque::Default as DefaultSuite;
-use crate::AppState;
+use crate::common::state::AppState;
 
 use entity::accounts;
 use entity::prelude::Accounts;
