@@ -16,21 +16,18 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 
-use crate::common::db;
+use crate::common::db::check_if_exists;
 use crate::common::opaque::Default;
 use crate::AppState;
 
-use entity::accounts;
-use entity::prelude::Accounts;
+use crate::common::api::{
+    b64_decode, deserialize, encode, error_response, parse_json, return_error,
+};
 
-use crate::common::api::{b64_decode, deserialize, error_response, parse_json, return_error};
-use crate::common::db::check_if_exists;
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
-use base64::prelude::*;
-use opaque_ke::{RegistrationRequest, ServerRegistration};
-use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
+use opaque_ke::ServerRegistration;
 use serde::Deserialize;
 use serde_json::{json, Value};
 use uuid::Uuid;
@@ -70,76 +67,28 @@ pub async fn main(
         Err(error) => return error,
     };
 
-    match ServerRegistration::<Default>::start(
+    let result = match ServerRegistration::<Default>::start(
         &state.server_setup,
         message,
         payload.username.as_bytes(),
     ) {
-        Ok(_) => (),
+        Ok(response) => response,
         Err(error) => return return_error(StatusCode::INTERNAL_SERVER_ERROR, error),
-    }
+    };
 
-    todo!()
-    /*
-    match Accounts::find()
-        .filter(accounts::Column::Name.eq(&payload.username))
-        .all(&db)
-        .await
-    {
-        Ok(results) => match results.first() {
-            None => {
-                match ServerRegistration::<Default>::start(
-                    &state.server_setup,
-                    deserialized,
-                    payload.username.as_bytes(),
-                ) {
-                    Ok(server_start_result) => {
-                        let response = BASE64_STANDARD.encode(
-                            match bincode::serialize(&server_start_result.message) {
-                                Ok(response) => response,
-                                Err(error) => {
-                                    return (
-                                        StatusCode::INTERNAL_SERVER_ERROR,
-                                        Json(json!({
-                                            "error": format!("{}", error)
-                                        })),
-                                    )
-                                }
-                            },
-                        );
+    let response = match encode(&result.message).await {
+        Ok(response) => response,
+        Err(error) => return error,
+    };
 
-                        let flow_id = Uuid::now_v7();
-                        state.flows.register.insert(flow_id, payload.username);
+    let flow_id = Uuid::now_v7();
+    state.flows.register.insert(flow_id, payload.username);
 
-                        (
-                            StatusCode::OK,
-                            Json(json!({
-                                "flow_id": flow_id,
-                                "response": response
-                            })),
-                        )
-                    }
-                    Err(error) => (
-                        StatusCode::INTERNAL_SERVER_ERROR,
-                        Json(json!({
-                            "error": format!("{}", error)
-                        })),
-                    ),
-                }
-            }
-            Some(_) => (
-                StatusCode::BAD_REQUEST,
-                Json(json!({
-                    "error": "a user with this name already exists"
-                })),
-            ),
-        },
-        Err(error) => (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(json!({
-                "error": format!("{}", error)
-            })),
-        ),
-    }
-     */
+    (
+        StatusCode::OK,
+        Json(json!({
+            "flow_id": flow_id,
+            "response": response
+        })),
+    )
 }

@@ -46,9 +46,9 @@ pub async fn b64_decode(base64: &String) -> Result<Vec<u8>, ErrorResponse> {
     }
 }
 
-pub async fn serialize<T: ?Sized>(value: &T) -> Result<Vec<u8>, ErrorResponse>
+pub async fn serialize<T>(value: &T) -> Result<Vec<u8>, ErrorResponse>
 where
-    T: serde::Serialize,
+    T: serde::Serialize + ?Sized,
 {
     match bincode::serialize(value) {
         Ok(serialized) => Ok(serialized),
@@ -56,7 +56,7 @@ where
     }
 }
 
-pub async fn deserialize<'a, S>(bytes: <'a>&[u8]) -> Result<S, ErrorResponse>
+pub async fn deserialize<'a, S>(bytes: &'a [u8]) -> Result<S, ErrorResponse>
 where
     S: serde::de::Deserialize<'a>,
 {
@@ -66,27 +66,12 @@ where
     }
 }
 
-pub async fn encode<T: ?Sized>(value: &T) -> Result<String, ErrorResponse>
+pub async fn encode<T>(value: &T) -> Result<String, ErrorResponse>
 where
-    T: serde::Serialize,
+    T: serde::Serialize + ?Sized,
 {
     match serialize(value).await {
         Ok(serialized) => Ok(b64_encode(serialized).await),
-        Err(error) => Err(error),
-    }
-}
-
-pub async fn decode<'a, S>(base64: &String) -> Result<S, ErrorResponse>
-where
-    S: serde::de::Deserialize<'a>,
-{
-    match deserialize::<S>(match b64_decode(base64).await {
-        Ok(bytes) => (&bytes).to_owned(),
-        Err(error) => return Err(error),
-    })
-    .await
-    {
-        Ok(message) => Ok(message),
         Err(error) => Err(error),
     }
 }
