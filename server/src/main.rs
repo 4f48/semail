@@ -27,6 +27,7 @@ use routes::auth::register::start::main as register_start;
 use routes::get_emails::main as mails;
 use routes::get_users::main as users;
 use routes::receive::main as send;
+use routes::whodis::main as whodis;
 
 use migration::{Migrator, MigratorTrait};
 
@@ -62,6 +63,7 @@ async fn main() {
         .route("/auth/register/finish", post(register_finish))
         .route("/auth/login/start", post(login_start))
         .route("/auth/login/finish", post(login_finish))
+        .route("/whodis", get(whodis))
         // --- TESTING ROUTES, TO BE REMOVED ---
         .route(
             "/test",
