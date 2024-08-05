@@ -72,7 +72,7 @@ async fn main() {
         // ^^^ TESTING ROUTES, TO BE REMOVED ^^^
         .with_state(state);
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:25052")
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:26654")
         .await
         .unwrap();
     axum::serve(listener, app).await.unwrap();
