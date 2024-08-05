@@ -9,7 +9,7 @@
  * SE-Mail is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *  See the GNU General Public License for more details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with SE-Mail.
  * If not, see <https://www.gnu.org/licenses/>.
  *
@@ -18,7 +18,7 @@
 
 use crate::common::db;
 use crate::common::opaque::Default as DefaultSuite;
-use crate::AppState;
+use crate::common::state::AppState;
 
 use entity::accounts;
 use entity::prelude::Accounts;

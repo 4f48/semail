@@ -7,9 +7,9 @@
  * GNU General Public License, version 3, as published by the Free Software Foundation.
  *
  * SE-Mail is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *  See the GNU General Public License for more details.
- *  
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
  * You should have received a copy of the GNU General Public License along with SE-Mail.
  * If not, see <https://www.gnu.org/licenses/>.
  *
@@ -20,7 +20,6 @@ mod common;
 mod routes;
 
 use common::db;
-use common::opaque::Default;
 use routes::auth::login::finish::main as login_finish;
 use routes::auth::login::start::main as login_start;
 use routes::auth::register::finish::main as register_finish;
@@ -28,6 +27,7 @@ use routes::auth::register::start::main as register_start;
 use routes::get_emails::main as mails;
 use routes::get_users::main as users;
 use routes::receive::main as send;
+use routes::whodis::main as whodis;
 
 use migration::{Migrator, MigratorTrait};
 
@@ -36,22 +36,8 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use common::state::{AppState, Flows};
 use dashmap::DashMap;
-use opaque_ke::keypair::PrivateKey;
-use opaque_ke::{Ristretto255, ServerSetup};
-use uuid::Uuid;
-
-#[derive(Clone)]
-pub struct AppState {
-    pub server_setup: ServerSetup<Default, PrivateKey<Ristretto255>>,
-    pub flows: Flows,
-}
-
-#[derive(Clone)]
-pub struct Flows {
-    register: DashMap<Uuid, String>,
-    login: DashMap<Uuid, String>,
-}
 
 #[tokio::main]
 async fn main() {
@@ -77,6 +63,7 @@ async fn main() {
         .route("/auth/register/finish", post(register_finish))
         .route("/auth/login/start", post(login_start))
         .route("/auth/login/finish", post(login_finish))
+        .route("/whodis", get(whodis))
         // --- TESTING ROUTES, TO BE REMOVED ---
         .route(
             "/test",
@@ -87,7 +74,7 @@ async fn main() {
         // ^^^ TESTING ROUTES, TO BE REMOVED ^^^
         .with_state(state);
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:25052")
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:26654")
         .await
         .unwrap();
     axum::serve(listener, app).await.unwrap();
