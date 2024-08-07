@@ -1733,31 +1733,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "office"
-version = "0.1.0"
-dependencies = [
- "argon2",
- "axum",
- "base64 0.22.1",
- "bincode",
- "dashmap",
- "dotenv",
- "entity",
- "log",
- "migration",
- "opaque-ke",
- "rand",
- "regex",
- "sea-orm",
- "serde",
- "serde_json",
- "smallvec",
- "sqlx",
- "tokio",
- "uuid",
-]
-
-[[package]]
 name = "once_cell"
 version = "1.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2547,6 +2522,30 @@ checksum = "317936bbbd05227752583946b9e66d7ce3b489f84e11a94a510b4437fef407d7"
 dependencies = [
  "core-foundation-sys",
  "libc",
+]
+
+[[package]]
+name = "semail"
+version = "1.0.0-alpha.1"
+dependencies = [
+ "argon2",
+ "axum",
+ "base64 0.22.1",
+ "bincode",
+ "dashmap",
+ "dotenv",
+ "entity",
+ "log",
+ "migration",
+ "opaque-ke",
+ "rand",
+ "regex",
+ "sea-orm",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "tokio",
+ "uuid",
 ]
 
 [[package]]
