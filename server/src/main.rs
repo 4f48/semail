@@ -20,10 +20,7 @@ mod common;
 mod routes;
 
 use common::db;
-use routes::auth::login::finish::main as login_finish;
-use routes::auth::login::start::main as login_start;
-use routes::auth::register::finish::main as register_finish;
-use routes::auth::register::start::main as register_start;
+use routes::auth::challenge::main as challenge;
 use routes::get_emails::main as mails;
 use routes::get_users::main as users;
 use routes::receive::main as send;
@@ -38,6 +35,7 @@ use axum::{
 };
 use common::state::{AppState, Flows};
 use dashmap::DashMap;
+use webauthn_rs::prelude::*;
 
 #[tokio::main]
 async fn main() {
@@ -45,12 +43,18 @@ async fn main() {
 
     let server_setup = server_setup().await;
 
+    let rp_id = "semail.4f48.dev";
+    let rp_origin = Url::parse("https://semail.4f48.dev").unwrap();
+    let builder = WebauthnBuilder::new(rp_id, &rp_origin).unwrap();
+    let webauthn = builder.build().unwrap();
+
     let state = AppState {
         server_setup,
         flows: Flows {
             register: DashMap::new(),
             login: DashMap::new(),
         },
+        webauthn,
     };
 
     Migrator::up(&db::connect_db().await.unwrap(), None)
@@ -59,11 +63,8 @@ async fn main() {
 
     let app = Router::new()
         .route("/send", post(send))
-        .route("/auth/register/start", post(register_start))
-        .route("/auth/register/finish", post(register_finish))
-        .route("/auth/login/start", post(login_start))
-        .route("/auth/login/finish", post(login_finish))
         .route("/whodis", get(whodis))
+        .route("/auth/challenge", get(challenge))
         // --- TESTING ROUTES, TO BE REMOVED ---
         .route(
             "/test",
