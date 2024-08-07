@@ -1,16 +1,9 @@
 ---
-
+import Layout from "../layouts/base.astro";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>SEMail Web</title>
-	</head>
-	<body>
-		<h1>Welcome to SEMail</h1>
-	</body>
-</html>
+<Layout>
+	<h1>Welcome to this SEMail instance</h1>
+	<button class="underline">Log in</button>
+	<a href="/register" class="underline">Register</a>
+</Layout>
