@@ -22,15 +22,18 @@ use dashmap::DashMap;
 use opaque_ke::keypair::PrivateKey;
 use opaque_ke::{Ristretto255, ServerSetup};
 use uuid::Uuid;
+use webauthn_rs::prelude::PasskeyRegistration;
+use webauthn_rs::Webauthn;
 
 #[derive(Clone)]
 pub struct AppState {
     pub server_setup: ServerSetup<opaque::Default, PrivateKey<Ristretto255>>,
     pub flows: Flows,
+    pub webauthn: Webauthn,
 }
 
 #[derive(Clone)]
 pub struct Flows {
-    pub(crate) register: DashMap<Uuid, String>,
+    pub(crate) register: DashMap<Uuid, PasskeyRegistration>,
     pub(crate) login: DashMap<Uuid, String>,
 }
