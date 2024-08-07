@@ -20,6 +20,8 @@ import Layout from "../layouts/base.astro";
 	import { client } from "@passwordless-id/webauthn";
 	import type { UUID } from "crypto";
 
+	alert(!!window.PublicKeyCredential);
+
 	const form: HTMLFormElement | null = document.querySelector("form");
 	form?.addEventListener("submit", async (event) => { 
 		event.preventDefault();

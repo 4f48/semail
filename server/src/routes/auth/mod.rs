@@ -1,3 +1,1 @@
-pub mod login;
-pub mod register;
-pub mod register_old;
+pub mod challenge;
