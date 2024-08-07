@@ -1,0 +1,39 @@
+---
+import Layout from "../layouts/base.astro";
+
+export const prerender = false;
+
+let error: string | undefined;
+if (Astro.request.method === "POST") {
+	try {
+		const data = await Astro.request.formData();
+		const username = data.get("username");
+
+		if (typeof username !== "string") {
+			error = "Username be a string.";
+		} else if (username.length < 2) {
+			error = "Username must be at least 2 characters long.";
+		} else if (username.length > 24) {
+			error = "Username must not be longer than 24 characters";
+		}
+		else {
+			error = undefined;
+		}
+		// TODO: initiate WebAuthn registration
+	} catch (err) {
+		if (err instanceof Error) {
+			console.error(err.message);
+		}
+	}
+}
+---
+
+<Layout>
+	<form method="post">
+		<label for="username">Username</label>
+		<input id="username" name="username" class="border border-black">
+		<button type="submit" class="underline">Register</button>
+		{error}
+	</form>
+	<p>Already have an account? <a href="/" class="underline">Log in</a></p>
+</Layout>
