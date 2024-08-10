@@ -20,6 +20,9 @@ mod common;
 mod routes;
 
 use common::db;
+use dashmap::DashMap;
+use routes::auth::register::finish as register_finish;
+use routes::auth::register::start as register_start;
 use routes::get_emails::main as mails;
 use routes::get_users::main as users;
 use routes::receive::main as send;
@@ -31,10 +34,43 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use webauthn_rs::prelude::*;
+
+#[derive(Clone)]
+struct AppState {
+    rp: Webauthn,
+    auth_flows: AuthFlows,
+}
+
+#[derive(Clone)]
+struct AuthFlows {
+    register: DashMap<Uuid, RegistrationFlow>,
+}
+
+#[derive(Clone)]
+struct RegistrationFlow {
+    registration_state: PasskeyRegistration,
+    username: String,
+    uuid: Uuid,
+}
 
 #[tokio::main]
 async fn main() {
     db::create_db().await;
+
+    let id = "semail.4f48.dev";
+    let origin = Url::parse("https://semail.4f48.dev").unwrap();
+
+    // not sure if this "mut" is necessary, but documentation suggests it is for some reason
+    let mut builder = WebauthnBuilder::new(id, &origin).unwrap();
+    let rp = builder.build().unwrap();
+
+    let state = AppState {
+        rp,
+        auth_flows: AuthFlows {
+            register: DashMap::new(),
+        },
+    };
 
     Migrator::up(&db::connect_db().await.unwrap(), None)
         .await
@@ -43,14 +79,17 @@ async fn main() {
     let app = Router::new()
         .route("/send", post(send))
         .route("/whodis", get(whodis))
+        .route("/auth/register/start", post(register_start))
+        .route("/auth/register/finish", post(register_finish))
         // --- TESTING ROUTES, TO BE REMOVED ---
         .route(
             "/test",
             get(|| async { db::create_test_user().await.unwrap() }),
         )
         .route("/get", get(users))
-        .route("/mails", get(mails));
+        .route("/mails", get(mails))
         // ^^^ TESTING ROUTES, TO BE REMOVED ^^^
+        .with_state(state);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:26654")
         .await
