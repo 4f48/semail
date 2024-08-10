@@ -16,7 +16,9 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 
-use entity::accounts::ActiveModel;
+use axum::http::StatusCode;
+use axum::Json;
+use entity::accounts::{ActiveModel, Model};
 use entity::prelude::{Accounts, Mails};
 use entity::{accounts, mails};
 use migration::{Migrator, MigratorTrait};
@@ -30,6 +32,8 @@ use sqlx::migrate::MigrateDatabase;
 use sqlx::Sqlite;
 use std::time::Duration;
 use uuid::Uuid;
+
+use super::api::{error_response, return_error};
 
 const DB_URL: &str = "sqlite://sqlite.db";
 pub async fn create_db() {
@@ -64,6 +68,34 @@ pub async fn connect_db() -> Result<DatabaseConnection, DbErr> {
         .sqlx_logging(true)
         .sqlx_logging_level(log::LevelFilter::Info);
     Database::connect(opt).await
+}
+
+pub async fn query_user(username: &str) -> Result<Model, (StatusCode, Json<Value>)> {
+    let db = match connect_db().await {
+        Ok(database_connection) => database_connection,
+        Err(error) => return Err(return_error(StatusCode::INTERNAL_SERVER_ERROR, error)),
+    };
+
+    let results = match Accounts::find()
+        .filter(accounts::Column::Name.eq(username))
+        .all(&db)
+        .await
+    {
+        Ok(results) => results,
+        Err(error) => return Err(return_error(StatusCode::INTERNAL_SERVER_ERROR, error)),
+    };
+
+    let user = match results.first() {
+        Some(user) => user.to_owned(),
+        None => {
+            return Err(error_response(
+                StatusCode::BAD_REQUEST,
+                String::from("This user doesn't exist."),
+            ))
+        }
+    };
+
+    Ok(user)
 }
 
 pub async fn check_if_exists(username: &String) -> Result<bool, DbErr> {

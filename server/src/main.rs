@@ -21,6 +21,8 @@ mod routes;
 
 use common::db;
 use dashmap::DashMap;
+use routes::auth::login::finish as login_finish;
+use routes::auth::login::start as login_start;
 use routes::auth::register::finish as register_finish;
 use routes::auth::register::start as register_start;
 use routes::get_emails::main as mails;
@@ -45,6 +47,7 @@ struct AppState {
 #[derive(Clone)]
 struct AuthFlows {
     register: DashMap<Uuid, RegistrationFlow>,
+    login: DashMap<Uuid, PasskeyAuthentication>,
 }
 
 #[derive(Clone)]
@@ -69,6 +72,7 @@ async fn main() {
         rp,
         auth_flows: AuthFlows {
             register: DashMap::new(),
+            login: DashMap::new(),
         },
     };
 
@@ -81,6 +85,8 @@ async fn main() {
         .route("/whodis", get(whodis))
         .route("/auth/register/start", post(register_start))
         .route("/auth/register/finish", post(register_finish))
+        .route("/auth/login/start", post(login_start))
+        .route("/auth/login/finish", post(login_finish))
         // --- TESTING ROUTES, TO BE REMOVED ---
         .route(
             "/test",
